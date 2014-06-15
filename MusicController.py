@@ -206,6 +206,7 @@ def transformAudio():
     #Open the FIFO that MPD has created for us
     #This represents the sample (44100:16:2) that MPD is currently "playing"
     fifo = os.open('/tmp/mpd.fifo', os.O_RDONLY)
+    
     while 1:
         try:
             rawStream = os.read(fifo, 1024)

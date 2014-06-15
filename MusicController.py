@@ -59,10 +59,8 @@ def refreshTrack(stopEvent):
             pass
         track = MusicTrack.refresh()
         if track is not None and track != prevTrack:
-            #disableRMS()
             LCDScreen.switchOn()
             LCDScreen.setLines(track[0], 0, track[1], 2)
-            #enableRMS()
         elif track is None:
             LCDScreen.switchOff()
         prevTrack = track
@@ -86,13 +84,13 @@ def monitorButtons(lcd, stopEvent, isOn):
             if not pressing:
                 os.system("mpc volume +2")
                 vol = getMPDStatus('volume')
-                LCDScreen.setLine2("Volume " + str(vol), 1)
+                LCDScreen.setLine2("Volume {0!s}     ".format(vol), 1)
                 pressing = True
         elif (lcd.buttonPressed(lcd.DOWN)):
             if not pressing:
                 os.system("mpc volume -2")
                 vol = getMPDStatus('volume')
-                LCDScreen.setLine2("Volume " + str(vol), 1)
+                LCDScreen.setLine2("Volume {0!s}     ".format(vol), 1)
                 pressing = True
         elif (lcd.buttonPressed(lcd.SELECT)):
             if not pressing:
@@ -121,11 +119,11 @@ def monitorRemote():
         elif event.code == ecodes.KEY_UP:
             os.system("mpc volume +2")
             vol = getMPDStatus('volume')
-            LCDScreen.setLine2("Volume " + str(vol), 1)
+            LCDScreen.setLine2("Volume {0!s}     ".format(vol), 1)
         elif event.code == ecodes.KEY_DOWN:
             os.system("mpc volume -2")
             vol = getMPDStatus('volume')
-            LCDScreen.setLine2("Volume " + str(vol), 1)
+            LCDScreen.setLine2("Volume {0!s}     ".format(vol), 1)
         elif event.code == ecodes.KEY_ENTER:
             os.system("mpc toggle")
         elif event.code == ecodes.KEY_ESC:

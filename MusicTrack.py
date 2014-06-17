@@ -21,6 +21,7 @@ class MusicTrack(object):
         msg = None
         status = cls.mMpc.status()
         state = status['state']
+        item3 = status['volume']
         if state in ['play', 'pause']:        
             current = cls.mMpc.currentsong()
             filename = current['file']
@@ -41,7 +42,7 @@ class MusicTrack(object):
                     item2 = current['artist']
                 else:
                     item2 = ''
-            msg = [item1, item2]
+            msg = [item1, item2, item3]
         with cls.mLock:
             cls.mMessage = msg
         return msg

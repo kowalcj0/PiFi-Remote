@@ -53,7 +53,7 @@ class SpectrumAnalyzer(object):
         list[numpy.isinf(spectrum)] = 0
         
         # Compute a simple 'moving maximum'
-        maximum = 2*self.SmoothOut(max(list))
+        maximum = 1.5*self.SmoothOut(max(list))
         if maximum == 0:
             scaleFactor = 0.0
         else:
@@ -68,7 +68,7 @@ class SpectrumAnalyzer(object):
         rawSamples = fifoFile.read(self.sampleSize)    # will return empty lines (non-blocking)    
         pcm = numpy.fromstring(rawSamples, dtype=numpy.int16)
         
-        # Normalize [-1; +1]
+        # Normalize from signed int 16 to [-1; +1]
         pcm = pcm / (2.**15)
         
         # Compute RMS directly from signal

@@ -36,21 +36,24 @@ def getMPDStatus(name):
     mpc.disconnect()
     return status[name]
     
-def refreshRMS(stopEvent):
+def refreshRMS(changeEvent, stopEvent):
     global mEnableRMSEvent
     analyzer = sa.SpectrumAnalyzer(1024, 44100, 8, 5)
     print "Job refreshRMS started"
     with open(sa.MPD_FIFO) as fifo:
         while not stopEvent.is_set():
+            if changeEvent.is_set():
+                analyzer.ResetSmoothing()
+                changeEvent.clear()
             if MusicTrack.getInfo() is not None:
                 n = analyzer.ComputeRMS(fifo, 16)
                 LCDScreen.setLine2("="*n + " "*(16-n))
     print "Job refreshRMS stopped"
 
-def refreshTrack(stopEvent):
+def refreshTrack(changeEvent, stopEvent):
     mpc = createMPDClient()
     MusicTrack.init(mpc)
-    prevTrack = None
+    prevTitle = None
     print "Job refreshTrack started"
     while not stopEvent.is_set():
         try:
@@ -58,12 +61,16 @@ def refreshTrack(stopEvent):
         except:
             pass
         track = MusicTrack.refresh()
-        if track is not None and track != prevTrack:
+        if track is not None and track[0] != prevTitle:
+            changeEvent.set()
             LCDScreen.switchOn()
             LCDScreen.setLines(track[0], 0, track[1], 2)
+            prevTitle = track[0]
+        elif track is not None and track[0] == prevTitle:
+            LCDScreen.setLine2("Volume {0!s}%      ".format(track[2]), 1)
         elif track is None:
             LCDScreen.switchOff()
-        prevTrack = track
+            prevTitle = None
     mpc.close()
     mpc.disconnect() 
     print "Job refreshTrack stopped"
@@ -84,13 +91,13 @@ def monitorButtons(lcd, stopEvent, isOn):
             if not pressing:
                 os.system("mpc volume +2")
                 vol = getMPDStatus('volume')
-                LCDScreen.setLine2("Volume {0!s}     ".format(vol), 1)
+                LCDScreen.setLine2("Volume {0!s}%      ".format(vol), 1)
                 pressing = True
         elif (lcd.buttonPressed(lcd.DOWN)):
             if not pressing:
                 os.system("mpc volume -2")
                 vol = getMPDStatus('volume')
-                LCDScreen.setLine2("Volume {0!s}     ".format(vol), 1)
+                LCDScreen.setLine2("Volume {0!s}%      ".format(vol), 1)
                 pressing = True
         elif (lcd.buttonPressed(lcd.SELECT)):
             if not pressing:
@@ -138,6 +145,7 @@ def monitorRemote():
     print "Job monitorRemote stopped"
     
 def startJobs():
+    global mChangeEvent
     global mStop
     global mIsOn
     global mThreadTrack
@@ -147,6 +155,7 @@ def startJobs():
     # Use busnum = 0 for raspi version 1 (256MB) and busnum = 1 for version 2
     lcd = Adafruit_CharLCDPlate(busnum = 0)
         
+    mChangeEvent = threading.Event()
     mStop = threading.Event()
     mIsOn = threading.Event() 
     
@@ -154,11 +163,11 @@ def startJobs():
     sleep(2)
     
     print "MPD display job starting..."
-    mThreadTrack = threading.Thread(target=refreshTrack, args=(mStop,))
+    mThreadTrack = threading.Thread(target=refreshTrack, args=(mChangeEvent, mStop))
     mThreadTrack.start()
     
     print "RMS display job starting..."
-    mThreadRMS = threading.Thread(target=refreshRMS, args=(mStop,))
+    mThreadRMS = threading.Thread(target=refreshRMS, args=(mChangeEvent, mStop))
     mThreadRMS.start()
     
     print "LCD buttons monitor job starting..."
@@ -167,12 +176,14 @@ def startJobs():
 
 
 def stopJobs():
+    global mChangeEvent
     global mStop
     global mIsOn
     global mThreadTrack
     global mThreadRMS
     global mThreadLCDButtons
     
+    # Redundant with signal handler
     mStop.set()
     
     print "LCD buttons monitor job stopping..."
@@ -192,6 +203,7 @@ def stopJobs():
     
     LCDScreen.switchOff()
     
+    mChangeEvent = None
     mStop = None
     mIsOn = None
     print "Jobs stopped."

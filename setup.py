@@ -6,9 +6,12 @@ import pifi
 
 here = path.abspath(path.dirname(__file__))
 
-# Get the long description from the relevant file
-with open(path.join(here, 'DESCRIPTION.rst'), encoding='utf-8') as f:
-    long_description = f.read()
+# Utility function to read the README file.
+# Used for the long_description.  It's nice, because now 1) we have a top level
+# README file and 2) it's easier to type in the README file than to put a raw
+# string in below ...
+def read(fname):
+    return open(path.join(path.dirname(__file__), fname)).read()
 
 setup(
     name='PiFi',
@@ -19,7 +22,7 @@ setup(
     version='1.0.0',
 
     description='Hi Fi music hub on Raspberry Pi',
-    long_description=long_description,
+    long_description=read('README'),
 
     # The project's main homepage.
     url='https://bitbucket.org/bertrandboichon/pi.hifi',
@@ -68,7 +71,7 @@ setup(
     # project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/technical.html#install-requires-vs-requirements-files
-    install_requires=['peppercorn'],
+    install_requires=['mpd'],
 
     # If there are data files included in your packages that need to be
     # installed, specify them here.  If using Python 2.6 or less, then these

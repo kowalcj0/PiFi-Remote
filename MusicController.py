@@ -43,10 +43,10 @@ def refreshRMS(changeEvent, stopEvent):
     with open(sa.MPD_FIFO) as fifo:
         while not stopEvent.is_set():
             if changeEvent.is_set():
-                analyzer.ResetSmoothing()
+                analyzer.resetSmoothing()
                 changeEvent.clear()
             if MusicTrack.getInfo() is not None:
-                n = analyzer.ComputeRMS(fifo, 16)
+                n = analyzer.computeRMS(fifo, 16)
                 LCDScreen.setLine2("="*n + " "*(16-n))
     print "Job refreshRMS stopped"
 
@@ -54,23 +54,30 @@ def refreshTrack(changeEvent, stopEvent):
     mpc = createMPDClient()
     MusicTrack.init(mpc)
     prevTitle = None
+    prevVol = None
     print "Job refreshTrack started"
     while not stopEvent.is_set():
         try:
             mpc.idle()
         except:
             pass
-        track = MusicTrack.refresh()
+        track = MusicTrack.retrieve()
         if track is not None and track[0] != prevTitle:
             changeEvent.set()
             LCDScreen.switchOn()
-            LCDScreen.setLines(track[0], 0, track[1], 2)
+            LCDScreen.setLines(track[0], 0, track[1], 1)
             prevTitle = track[0]
-        elif track is not None and track[0] == prevTitle:
-            LCDScreen.setLine2("Volume {0!s}%      ".format(track[2]), 1)
+            prevVol = track[2]
+        if track is not None and track[0] == prevTitle:
+            if prevVol == track[2]:
+                LCDScreen.setLine2(track[1], 1)
+            else:
+                LCDScreen.setLine2("Volume {0!s}%      ".format(track[2]), 1)
+            prevVol = track[2]
         elif track is None:
             LCDScreen.switchOff()
             prevTitle = None
+            prevVol = None
     mpc.close()
     mpc.disconnect() 
     print "Job refreshTrack stopped"
@@ -126,11 +133,11 @@ def monitorRemote():
         elif event.code == ecodes.KEY_UP:
             os.system("mpc volume +2")
             vol = getMPDStatus('volume')
-            LCDScreen.setLine2("Volume {0!s}     ".format(vol), 1)
+            LCDScreen.setLine2("Volume {0!s}%     ".format(vol), 1)
         elif event.code == ecodes.KEY_DOWN:
             os.system("mpc volume -2")
             vol = getMPDStatus('volume')
-            LCDScreen.setLine2("Volume {0!s}     ".format(vol), 1)
+            LCDScreen.setLine2("Volume {0!s}%     ".format(vol), 1)
         elif event.code == ecodes.KEY_ENTER:
             os.system("mpc toggle")
         elif event.code == ecodes.KEY_ESC:

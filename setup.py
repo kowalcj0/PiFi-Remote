@@ -2,7 +2,7 @@ from setuptools import setup, find_packages  # Always prefer setuptools over dis
 from codecs import open  # To use a consistent encoding
 from os import path
 
-import __init__ 
+import pifi 
 
 here = path.abspath(path.dirname(__file__))
 

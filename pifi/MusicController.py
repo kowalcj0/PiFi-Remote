@@ -258,10 +258,10 @@ if __name__ == '__main__':
     try:
         startJobs()
         monitorRemote()
-        stopJobs()
     except Exception as e:
         print "Caught exception:", e
-        raise
+        
+    stopJobs()
 
     print "Terminating musiccontroller script."     
     exit(0)

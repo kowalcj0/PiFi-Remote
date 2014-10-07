@@ -261,6 +261,7 @@ if __name__ == '__main__':
         stopJobs()
     except Exception as e:
         print "Caught exception:", e
+        raise e
 
     print "Terminating musiccontroller script."     
     exit(0)

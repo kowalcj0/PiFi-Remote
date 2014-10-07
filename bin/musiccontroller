@@ -11,7 +11,8 @@
 ### END INIT INFO
  
 # Daemon script to call
-DAEMON=MusicController.py
+DIR=.
+DAEMON=$DIR/MusicController.py
 DAEMON_NAME=musiccontroller
  
 # This next line determines what user the script runs as.

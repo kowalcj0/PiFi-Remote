@@ -10,8 +10,7 @@
 # Description:       Play music files and internet radio using mpd to the standard audio output
 ### END INIT INFO
  
-# Change the next 3 lines to suit where you install your script and what you want to call it
-
+# Daemon script to call
 DAEMON=MusicController.py
 DAEMON_NAME=musiccontroller
  

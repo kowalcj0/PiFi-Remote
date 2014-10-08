@@ -27,7 +27,10 @@ class MusicTrack(object):
             print "Current: ", current
             filename = current['file']
             if filename.startswith('http://'):
-                item1 = current['file']
+                if 'name' in current.keys():
+                    item1 = current['name']
+                else:
+                    item1 = current['file']
                 if state == 'pause':
                     item2 = '[paused]'
                 else:

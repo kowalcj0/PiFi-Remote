@@ -78,7 +78,7 @@ def refreshTrack(changeEvent, stopEvent):
             prevVol = track[2]
         if track is not None and track[0] == prevTitle:
             if prevVol == track[2]:
-                LCDScreen.setLine2(track[1], 1)
+                LCDScreen.setLine2(track[1]+"              ", 1)
             else:
                 LCDScreen.setLine2("Volume {0!s}%      ".format(track[2]), 1)
             prevVol = track[2]

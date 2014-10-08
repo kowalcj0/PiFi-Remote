@@ -34,6 +34,7 @@ def createMPDClient():
     mpc.connect("localhost", 6600)  # connect to localhost:6600
     mpc.random(0)
     mpc.crossfade(3)
+    mpc.consume(0)
     return mpc
             
 def getMPDStatus(name):

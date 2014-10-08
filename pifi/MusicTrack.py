@@ -22,7 +22,6 @@ class MusicTrack(object):
         msg = None
         status = cls.mMpc.status()
         state = status['state']
-        logger
         if state in ['play', 'pause']:        
             current = cls.mMpc.currentsong()
             filename = current['file']

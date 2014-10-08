@@ -24,7 +24,7 @@ class MusicTrack(object):
         state = status['state']
         if state in ['play', 'pause']:        
             current = cls.mMpc.currentsong()
-            print "Current: %s", current
+            print "Current: ", current
             filename = current['file']
             if filename.startswith('http://'):
                 item1 = current['name']

@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import threading
+import logging
 from mpd import MPDClient
 
 class MusicTrack(object):
@@ -21,6 +22,7 @@ class MusicTrack(object):
         msg = None
         status = cls.mMpc.status()
         state = status['state']
+        logger
         if state in ['play', 'pause']:        
             current = cls.mMpc.currentsong()
             filename = current['file']

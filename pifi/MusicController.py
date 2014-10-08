@@ -12,6 +12,13 @@ from LCDScreen import LCDScreen
 from MusicTrack import MusicTrack
 import SpectrumAnalyzer as sa
 
+import logging
+logging.basicConfig(filename='/var/log/pifi.log', 
+    format='%(asctime)s:%(levelname)s:%(message)s', 
+    filemode='w', 
+    level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 def exitHandler(signal, frame):
     print "Signaling internal jobs to stop..."
     try:

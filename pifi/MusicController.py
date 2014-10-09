@@ -258,8 +258,8 @@ if __name__ == '__main__':
     
     mpc = createMPDClient()
     logging.info("mpd version: " + mpc.mpd_version)
-    logging.info("mpd outputs: " + mpc.outputs())
-    logging.info("mpd stats: " + mpc.stats())
+    logging.info("mpd outputs: " + str(mpc.outputs()))
+    logging.info("mpd stats: " + str(mpc.stats()))
     mpc.close()
     mpc.disconnect()   
     

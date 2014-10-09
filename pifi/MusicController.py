@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.DEBUG,
                     filemode='w')
 
 def exitHandler(signal, frame):
-    print "Signaling internal jobs to stop..."
+    logging.info("Signaling internal jobs to stop...")
     try:
         mStop.set()
         os.system("mpc stop")

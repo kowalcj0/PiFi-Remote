@@ -257,9 +257,9 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, exitHandler)
     
     mpc = createMPDClient()
-    logging.info("mpd version: %s", mpc.mpd_version)
-    logging.info("mpd outputs: %s", mpc.outputs())
-    logging.info("mpd stats: %s", mpc.stats())
+    logging.info("mpd version: " + mpc.mpd_version)
+    logging.info("mpd outputs: " + mpc.outputs())
+    logging.info("mpd stats: " + mpc.stats())
     mpc.close()
     mpc.disconnect()   
     

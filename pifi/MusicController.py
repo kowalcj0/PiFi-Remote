@@ -220,7 +220,7 @@ def stopJobs():
     mChangeEvent = None
     mStop = None
     mIsOn = None
-    print "Jobs stopped."
+    logging.info("Jobs stopped.")
     
 def transformAudio():
     import os
@@ -256,9 +256,9 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, exitHandler)
     
     mpc = createMPDClient()
-    print "mpd version:", mpc.mpd_version
-    print "mpd outputs:", mpc.outputs()
-    print "mpd stats :", mpc.stats()
+    logging.info("mpd version: %s", mpc.mpd_version)
+    logging.info("mpd outputs: %s", mpc.outputs())
+    logging.info("mpd stats: %s", mpc.stats())
     mpc.close()
     mpc.disconnect()   
     
@@ -266,7 +266,7 @@ if __name__ == '__main__':
         startJobs()
         monitorRemote()
     except Exception as e:
-        print "Caught exception:", e
+        logging.error("Caught exception: %s", e)
         
     stopJobs()
 

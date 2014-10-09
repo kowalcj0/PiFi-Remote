@@ -271,6 +271,6 @@ if __name__ == '__main__':
         
     stopJobs()
 
-    print "Terminating musiccontroller script."     
+    print "Terminating musiccontroller."     
     exit(0)
     

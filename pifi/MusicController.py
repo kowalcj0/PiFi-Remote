@@ -188,7 +188,7 @@ def startJobs():
     logging.info("LCD buttons monitor job starting...")
     mThreadLCDButtons = threading.Thread(target=monitorButtons, args=(lcd, mStop, mIsOn))
     mThreadLCDButtons.start()
-
+    print "Jobs started..."
 
 def stopJobs():
     global mChangeEvent

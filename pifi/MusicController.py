@@ -13,7 +13,7 @@ from MusicTrack import MusicTrack
 import SpectrumAnalyzer as sa
 
 import logging
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(module)s.%(funcName)s: %(message)s',
                     filename='/var/log/pifi.log',
                     filemode='w')

@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import threading
+import logging
 from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 from WaitForMultipleEvents import WaitForMultipleEvents
 
@@ -99,14 +100,14 @@ class LCDScreen(object):
         freeze1 = threading.Event()
         freeze2 = threading.Event()
         timers = [None, None]
-        print "Job LCD display started"
+        logging.info("Job LCD display started")
         while not cls.mStop.is_set():
             line1 = ''
             line2 = ''
             triggeredEvents = cls.mController.waitAny()
             if cls.mUpdate1.is_set():
                 (line1, d1) = cls.getLine1()      
-                #print "line1:", line1
+                #logging.debug("line1:%s", line1)
                 if d1 > 0 and len(line1) > 0:
                     if timers[0] is not None:
                         timers[0].cancel()
@@ -120,7 +121,7 @@ class LCDScreen(object):
             if not freeze2.is_set() and cls.mUpdate2.is_set():
                 (line2, d2) = cls.getLine2()  
                 if d2 > 0 and len(line2) > 0:
-                    #print "line2:", line2, cls.mD2
+                    #logging.debug("line2:%s - %d", line2, cls.mD2)
                     if timers[1] is not None:
                         timers[1].cancel()
                     freeze2.set()
@@ -128,7 +129,7 @@ class LCDScreen(object):
                     timers[1].start()       
             with cls.mLock:
                 if line1 != '':  
-                    #print "msg:", line1, line2
+                    #logging.debug("msg:%s / %s", line1, line2)
                     cls.mLcd.clear()
                 cls.mLcd.message(line1 + '\n' + line2)
-        print "Job LCD display stopped"
+        logging.info("Job LCD display stopped")

@@ -13,11 +13,10 @@ from MusicTrack import MusicTrack
 import SpectrumAnalyzer as sa
 
 import logging
-logging.basicConfig(filename='/var/log/pifi.log', 
-    format='%(asctime)s:%(levelname)s:%(message)s', 
-    filemode='w', 
-    level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(funcName)s: %(message)s',
+                    filename='/var/log/pifi.log',
+                    filemode='w')
 
 def exitHandler(signal, frame):
     print "Signaling internal jobs to stop..."
@@ -25,7 +24,7 @@ def exitHandler(signal, frame):
         mStop.set()
         os.system("mpc stop")
     except:
-        print "Unexpected error:", sys.exc_info()[0]
+        logging.error("Unexpected error: %s", sys.exc_info()[0])
 
 def createMPDClient():
     mpc = MPDClient()           
@@ -47,7 +46,7 @@ def getMPDStatus(name):
 def refreshRMS(changeEvent, stopEvent):
     global mEnableRMSEvent
     analyzer = sa.SpectrumAnalyzer(1024, 44100, 8, 5)
-    print "Job refreshRMS started"
+    logging.info("Job refreshRMS started")
     with open(sa.MPD_FIFO) as fifo:
         while not stopEvent.is_set():
             if changeEvent.is_set():
@@ -56,14 +55,14 @@ def refreshRMS(changeEvent, stopEvent):
             if MusicTrack.getInfo() is not None:
                 n = analyzer.computeRMS(fifo, 16)
                 LCDScreen.setLine2("="*n + " "*(16-n))
-    print "Job refreshRMS stopped"
+    logging.info("Job refreshRMS stopped")
 
 def refreshTrack(changeEvent, stopEvent):
     mpc = createMPDClient()
     MusicTrack.init(mpc)
     prevTitle = None
     prevVol = None
-    print "Job refreshTrack started"
+    logging.info("Job refreshTrack started")
     while not stopEvent.is_set():
         try:
             mpc.idle()
@@ -88,11 +87,11 @@ def refreshTrack(changeEvent, stopEvent):
             prevVol = None
     mpc.close()
     mpc.disconnect() 
-    print "Job refreshTrack stopped"
+    logging.info("Job refreshTrack stopped")
     
 def monitorButtons(lcd, stopEvent, isOn):
     pressing = False
-    print "Job monitorButtons started"
+    logging.info("Job monitorButtons started")
     while not stopEvent.is_set():
         if (lcd.buttonPressed(lcd.LEFT)):
             if not pressing:
@@ -126,11 +125,11 @@ def monitorButtons(lcd, stopEvent, isOn):
         else:
             pressing = False
         sleep(0.25)
-    print "Job monitorButtons stopped"
+    logging.info("Job monitorButtons stopped")
     
 def monitorRemote():
     dev = InputDevice('/dev/input/event0')
-    print "Job monitorRemote started"
+    logging.info("Job monitorRemote started")
     for event in dev.read_loop():
         if event.type != ecodes.EV_KEY or event.value != 1:
             continue
@@ -157,7 +156,7 @@ def monitorRemote():
                 mIsOn.set()
         elif event.code == ecodes.KEY_A:
             break
-    print "Job monitorRemote stopped"
+    logging.info("Job monitorRemote stopped")
     
 def startJobs():
     global mChangeEvent
@@ -177,15 +176,15 @@ def startJobs():
     LCDScreen.init(lcd, mStop, mIsOn)
     sleep(2)
     
-    print "MPD display job starting..."
+    logging.info("MPD display job starting...")
     mThreadTrack = threading.Thread(target=refreshTrack, args=(mChangeEvent, mStop))
     mThreadTrack.start()
     
-    print "RMS display job starting..."
+    logging.info("RMS display job starting...")
     mThreadRMS = threading.Thread(target=refreshRMS, args=(mChangeEvent, mStop))
     mThreadRMS.start()
     
-    print "LCD buttons monitor job starting..."
+    logging.info("LCD buttons monitor job starting...")
     mThreadLCDButtons = threading.Thread(target=monitorButtons, args=(lcd, mStop, mIsOn))
     mThreadLCDButtons.start()
 
@@ -201,17 +200,17 @@ def stopJobs():
     # Redundant with signal handler
     mStop.set()
     
-    print "LCD buttons monitor job stopping..."
+    logging.info("LCD buttons monitor job stopping...")
     if mThreadLCDButtons is not None:
         mThreadLCDButtons.join(3)
     mThreadLCDButtons = None
     
-    print "RMS display job stopping..."
+    logging.info("RMS display job stopping...")
     if mThreadRMS is not None:
         mThreadRMS.join(3)
     mThreadRMS = None
     
-    print "MPD display job stopping..."
+    logging.info("MPD display job stopping...")
     if mThreadTrack is not None:
         mThreadTrack.join(3)
     mThreadTrack = None

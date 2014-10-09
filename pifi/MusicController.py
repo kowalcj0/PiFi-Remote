@@ -69,7 +69,7 @@ def refreshTrack(changeEvent, stopEvent):
         except:
             pass
         track = MusicTrack.retrieve()
-        logging.debug("Track: %s", track)
+        logging.debug("Track=%s", track)
         if track is not None and track[0] != prevTitle:
             changeEvent.set()
             LCDScreen.switchOn()

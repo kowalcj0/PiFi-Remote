@@ -14,7 +14,7 @@ import SpectrumAnalyzer as sa
 
 import logging
 logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s %(levelname)s %(funcName)s: %(message)s',
+                    format='%(asctime)s %(levelname)s %(module)s.%(funcName)s: %(message)s',
                     filename='/var/log/pifi.log',
                     filemode='w')
 

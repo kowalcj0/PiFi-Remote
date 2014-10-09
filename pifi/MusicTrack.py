@@ -1,6 +1,5 @@
 #!/usr/bin/python
 import threading
-import logging
 from mpd import MPDClient
 
 class MusicTrack(object):

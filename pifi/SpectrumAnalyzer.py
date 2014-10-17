@@ -47,7 +47,7 @@ class SpectrumAnalyzer(object):
     def smoothOut(self, x):
         self.count += 1
         self.average = (self.average*self.count + x) / (self.count+1)
-        #logging.debug("Smooth: count=%d x=%d avg=%d", self.count, x, self.average)
+        logging.debug("Smooth: count={} x={} avg={}".format(self.count, x, self.average))
         return self.average
     
     def scaleList(self, list, scaleWidth):

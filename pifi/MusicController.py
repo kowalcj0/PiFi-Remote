@@ -125,14 +125,14 @@ def monitorButtons(lcd, stopEvent, isOn):
                     isOn.set()
         else:
             pressing = False
-        sleep(0.25)
+        sleep(0.5)
     logging.info("Job monitorButtons stopped")
     
 def monitorRemote():
     dev = InputDevice('/dev/input/event0')
     logging.info("Job monitorRemote started")
     for event in dev.read_loop():
-        #logging.info(event)
+        logging.debug(event)
         if event.type != ecodes.EV_KEY or event.value != 1:
             continue
         if event.code == ecodes.KEY_LEFT:

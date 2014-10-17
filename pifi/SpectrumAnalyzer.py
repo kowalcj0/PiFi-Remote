@@ -42,7 +42,7 @@ class SpectrumAnalyzer(object):
     def resetSmoothing(self):
         self.count = 0
         self.average = 0
-        logging.debug("Reset - avg: %d", self.average)
+        logging.debug("Reset - %d, %d", self.count, self.average)
         
     def smoothOut(self, x):
         self.count += 1

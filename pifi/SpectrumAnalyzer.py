@@ -42,7 +42,7 @@ class SpectrumAnalyzer(object):
     def resetSmoothing(self):
         self.count = 0
         self.average = 0
-        logging.debug("Reset - %d, %d", self.count, self.average)
+        logging.debug("Reset - {}, {}".format(self.count, self.average))
         
     def smoothOut(self, x):
         self.count += 1
@@ -79,7 +79,7 @@ class SpectrumAnalyzer(object):
         
         # Compute a simple 'moving maximum'
         maximum = 2*self.smoothOut(rms)
-        logging.debug("Rms:%d Max:%d", rms, maximum)
+        logging.debug("Rms:{} Max:{}".format(rms, maximum))
         if maximum == 0:
             scaleFactor = 0.0
         else:

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import numpy
 import time
+import logging
 
 MPD_FIFO = '/tmp/mpd.fifo'
 SAMPLE_SIZE = 256
@@ -41,10 +42,12 @@ class SpectrumAnalyzer(object):
     def resetSmoothing(self):
         self.count = 0
         self.average = 0
+        logging.debug("Reset - avg: %d", self.average)
         
     def smoothOut(self, x):
         self.count += 1
         self.average = (self.average*self.count + x) / (self.count+1)
+        logging.debug("New avg: %d", self.average)
         return self.average
     
     def scaleList(self, list, scaleWidth):

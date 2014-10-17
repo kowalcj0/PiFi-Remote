@@ -47,7 +47,7 @@ class SpectrumAnalyzer(object):
     def smoothOut(self, x):
         self.count += 1
         self.average = (self.average*self.count + x) / (self.count+1)
-        logging.debug("Smooth: count=%d x=%d avg=%d", self.count, x, self.average)
+        #logging.debug("Smooth: count=%d x=%d avg=%d", self.count, x, self.average)
         return self.average
     
     def scaleList(self, list, scaleWidth):
@@ -79,6 +79,7 @@ class SpectrumAnalyzer(object):
         
         # Compute a simple 'moving maximum'
         maximum = 2*self.smoothOut(rms)
+        logging.debug("Rms:%d Max:%d", rms, maximum)
         if maximum == 0:
             scaleFactor = 0.0
         else:

@@ -107,7 +107,7 @@ class LCDScreen(object):
             triggeredEvents = cls.mController.waitAny()
             if cls.mUpdate1.is_set():
                 (line1, d1) = cls.getLine1()      
-                #logging.debug("line1:%s", line1)
+                logging.debug("New line1: %s", line1)
                 if d1 > 0 and len(line1) > 0:
                     if timers[0] is not None:
                         timers[0].cancel()
@@ -121,7 +121,7 @@ class LCDScreen(object):
             if not freeze2.is_set() and cls.mUpdate2.is_set():
                 (line2, d2) = cls.getLine2()  
                 if d2 > 0 and len(line2) > 0:
-                    #logging.debug("line2:%s - %d", line2, cls.mD2)
+                    logging.debug("New line2: %s - %d", line2, cls.mD2)
                     if timers[1] is not None:
                         timers[1].cancel()
                     freeze2.set()

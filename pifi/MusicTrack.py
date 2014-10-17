@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import threading
+import logging
 from mpd import MPDClient
 
 class MusicTrack(object):
@@ -39,7 +40,8 @@ class MusicTrack(object):
                 else:
                     item1 = current['file']
                 if state == 'pause':
-                    #elapsed = str(int(float(status['elapsed'])))
+                    elapsed = str(int(float(status['elapsed'])))
+                    logging.debug("Elapsed: %s", elapsed)
                     item2 = '[paused]'
                 elif 'artist' in current.keys():
                     item2 = current['artist']

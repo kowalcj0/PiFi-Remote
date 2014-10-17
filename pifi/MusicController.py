@@ -73,16 +73,16 @@ def refreshTrack(changeEvent, stopEvent):
         if track is not None and track[0] != prevTitle:
             changeEvent.set()
             LCDScreen.switchOn()
-            LCDScreen.setLines(track[0], 0, track[1], 1)
+            LCDScreen.setLine1(track[0], 0)
             prevTitle = track[0]
             prevVol = track[2]
-        if track is not None and track[0] == prevTitle:
+        if track is not None:
             if prevVol == track[2]:
-                LCDScreen.setLine2(track[1]+"           ", 1)
+                LCDScreen.setLine2(track[1]+" "*(16-len(track[1])), 1)
             else:
-                LCDScreen.setLine2("Volume {0!s}%      ".format(track[2]), 1)
+                LCDScreen.setLine2("Volume {0!s}%       ".format(track[2]), 1)
             prevVol = track[2]
-        elif track is None:
+        else:
             LCDScreen.switchOff()
             prevTitle = None
             prevVol = None
@@ -132,6 +132,7 @@ def monitorRemote():
     dev = InputDevice('/dev/input/event0')
     logging.info("Job monitorRemote started")
     for event in dev.read_loop():
+        #logging.info(event)
         if event.type != ecodes.EV_KEY or event.value != 1:
             continue
         if event.code == ecodes.KEY_LEFT:

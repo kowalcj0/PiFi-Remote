@@ -269,6 +269,7 @@ if __name__ == '__main__':
         monitorRemote()
     except Exception as e:
         logging.error("Caught exception: %s", e)
+        raise
         
     stopJobs()
 

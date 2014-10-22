@@ -67,10 +67,7 @@ def refreshRMS(changeEvent, stopEvent):
     logging.info("Job refreshRMS started")
     with open(MPD_FIFO) as fifo:
         while not stopEvent.is_set():
-            #if changeEvent.is_set():
-            #    analyzer.resetSmoothing()
-            #    changeEvent.clear()
-            if MusicTrack.getInfo() is not None:
+            if MpdTrack.getInfo() is not None:
                 n = computeRMS(fifo, 2048, 16)
                 LCDScreen.setLine2("="*n + " "*(16-n))
                 sleep(0.1)
@@ -78,14 +75,14 @@ def refreshRMS(changeEvent, stopEvent):
 
 def refreshTrack(changeEvent, stopEvent):
     mpc = createMPDClient()
-    MusicTrack.init(mpc)
+    MpdTrack.init(mpc)
     prevTrack = None
     logging.info("Job refreshTrack started")
     while not stopEvent.is_set():
         try:
             subsystem = mpc.idle('player','mixer')[0]
             if subsystem == 'player':
-                track = MusicTrack.retrieve()
+                track = MpdTrack.retrieve()
                 logging.info("Track: %s", track)
                 if track is not None:
                     if prevTrack is None or track[0] != prevTrack[0]:
@@ -108,7 +105,7 @@ def refreshTrack(changeEvent, stopEvent):
             #mpc.close()
             mpc.disconnect() 
             mpc = createMPDClient()
-            MusicTrack.init(mpc)
+            MpdTrack.init(mpc)
     mpc.close()
     mpc.disconnect() 
     logging.info("Job refreshTrack stopped")

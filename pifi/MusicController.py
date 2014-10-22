@@ -11,7 +11,37 @@ import mpd
 from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 from LCDScreen import LCDScreen
 from MusicTrack import MusicTrack
-import SpectrumAnalyzer as sa
+#import SpectrumAnalyzer as sa
+
+def transformAudio():
+    import os
+    import audioop
+    import time
+    import errno
+    import math
+    
+    #Open the FIFO that MPD has created for us
+    #This represents the sample (44100:16:2) that MPD is currently "playing"
+    fifo = os.open('/tmp/mpd.fifo', os.O_RDONLY)
+    
+    while True:
+        try:
+            rawStream = os.read(fifo, 1024)
+        except OSError as err:
+            if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
+                rawStream = None
+            else:
+                raise
+        if rawStream:
+            leftChannel = audioop.tomono(rawStream, 2, 1, 0)
+            rightChannel = audioop.tomono(rawStream, 2, 0, 1)
+            stereoPeak = audioop.max(rawStream, 2)
+            leftPeak = audioop.max(leftChannel, 2)
+            rightPeak = audioop.max(rightChannel, 2)
+            leftDB = 20 * math.log10(leftPeak) -74
+            rightDB = 20 * math.log10(rightPeak) -74
+            print(rightPeak, leftPeak, rightDB, leftDB)
+            
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(module)s.%(funcName)s: %(message)s',
@@ -178,35 +208,6 @@ def stopJobs():
     mChangeEvent = None
     mStop = None
     logging.info("Jobs stopped.")
-    
-def transformAudio():
-    import os
-    import audioop
-    import time
-    import errno
-    import math
-    
-    #Open the FIFO that MPD has created for us
-    #This represents the sample (44100:16:2) that MPD is currently "playing"
-    fifo = os.open('/tmp/mpd.fifo', os.O_RDONLY)
-    
-    while True:
-        try:
-            rawStream = os.read(fifo, 1024)
-        except OSError as err:
-            if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
-                rawStream = None
-            else:
-                raise
-        if rawStream:
-            leftChannel = audioop.tomono(rawStream, 2, 1, 0)
-            rightChannel = audioop.tomono(rawStream, 2, 0, 1)
-            stereoPeak = audioop.max(rawStream, 2)
-            leftPeak = audioop.max(leftChannel, 2)
-            rightPeak = audioop.max(rightChannel, 2)
-            leftDB = 20 * math.log10(leftPeak) -74
-            rightDB = 20 * math.log10(rightPeak) -74
-            print(rightPeak, leftPeak, rightDB, leftDB)
 
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, exitHandler)

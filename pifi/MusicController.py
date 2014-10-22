@@ -53,7 +53,8 @@ def computeRMS(fifoFile, scaleWidth):
             else:
                 logging.error("%s", err)
         if rawSamples:
-            logging.debug("stream: len=%d", len(rawSamples))
+            rms = audioop.rms(rawSamples, len(rawSamples))
+            logging.debug("data len=%d rms=%f", len(rawSamples), rms)
             #leftChannel = audioop.tomono(rawStream, 2, 1, 0)
             #rightChannel = audioop.tomono(rawStream, 2, 0, 1)
             #stereoPeak = audioop.max(rawStream, 2)

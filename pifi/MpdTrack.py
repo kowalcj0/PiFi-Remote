@@ -3,7 +3,7 @@ import threading
 import logging
 from mpd import MPDClient
 
-class MusicTrack(object):
+class MpdTrack(object):
     mMpc = None
     mMessage = None
     mLock = threading.Lock()

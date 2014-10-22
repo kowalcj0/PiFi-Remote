@@ -13,7 +13,7 @@ from LCDScreen import LCDScreen
 from MusicTrack import MusicTrack
 #import SpectrumAnalyzer as sa
             
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s %(module)s.%(funcName)s: %(message)s',
                     filename='/var/log/pifi.log',
                     filemode='w')
@@ -55,7 +55,7 @@ def computeRMS():
             else:
                 raise
         if rawStream:
-            logging.info("stream: len=%d", len(rawStream))
+            logging.debug("stream: len=%d", len(rawStream))
             #leftChannel = audioop.tomono(rawStream, 2, 1, 0)
             #rightChannel = audioop.tomono(rawStream, 2, 0, 1)
             #stereoPeak = audioop.max(rawStream, 2)

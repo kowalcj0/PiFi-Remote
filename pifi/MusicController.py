@@ -174,9 +174,9 @@ def startJobs():
     mThreadRMS = threading.Thread(target=refreshRMS, args=(mChangeEvent, mStop))
     mThreadRMS.start()
     
-    logging.info("Jobs started...")
     sleep(1)
     LCDScreen.switchOff()
+    logging.info("Jobs started...")
 
 def stopJobs():
     global mChangeEvent

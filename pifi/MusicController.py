@@ -42,11 +42,11 @@ def createMPDClient():
     mpc.crossfade(1)
     return mpc
 
-def computeRMS(fifoFile, scaleWidth):
+def computeRMS(fifoFile, sampleSize, scaleWidth):
     rms = 0
     try:
-        rawSamples = fifoFile.read(1024) 
-        if rawSamples:
+        rawSamples = fifoFile.read(sampleSize) 
+        if rawSamples and len(rawSamples) == sampleSize:
             rms = audioop.rms(rawSamples, 1) / 100.0
             rms = int(rms*scaleWidth)
             #leftChannel = audioop.tomono(rawStream, 2, 1, 0)
@@ -70,7 +70,7 @@ def refreshRMS(changeEvent, stopEvent):
                 #analyzer.resetSmoothing()
                 changeEvent.clear()
             if MusicTrack.getInfo() is not None:
-                n = computeRMS(fifo, 16)
+                n = computeRMS(fifo, 1024, 16)
                 LCDScreen.setLine2("="*n + " "*(16-n))
                 sleep(0.1)
     logging.info("Job refreshRMS stopped")

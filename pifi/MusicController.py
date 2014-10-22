@@ -43,7 +43,7 @@ def createMPDClient():
     return mpc
 
 def computeRMS(fifoFile, sampleSize, scale):
-    exponent = 8
+    exponent = 9
     level = 0
     try:
         rawSamples = fifoFile.read(sampleSize) 

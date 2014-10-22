@@ -45,15 +45,15 @@ def createMPDClient():
 def computeRMS(fifoFile, scaleWidth):
     while True:
         try:
-            rawData = fifoFile.read(1024) 
+            rawSamples = fifoFile.read(1024) 
         except OSError as err:
             if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
-                rawData = None
+                rawSamples = None
                 logging.debug("AGAIN/WOULDBLOCK: %s", err)
             else:
                 logging.error("%s", err)
-        if rawData:
-            logging.debug("stream: len=%d", len(rawData))
+        if rawSamples:
+            logging.debug("stream: len=%d", len(rawSamples))
             #leftChannel = audioop.tomono(rawStream, 2, 1, 0)
             #rightChannel = audioop.tomono(rawStream, 2, 0, 1)
             #stereoPeak = audioop.max(rawStream, 2)

@@ -43,15 +43,15 @@ def createMPDClient():
     return mpc
 
 def computeRMS(fifoFile, sampleSize, scale):
-    exponent = 5
+    exponent = 2
     level = 0
     try:
         rawSamples = fifoFile.read(sampleSize) 
         if rawSamples and len(rawSamples) == sampleSize:
             rms = float(audioop.rms(rawSamples, 1))
-            level1 = min(rms/256.0*1.0, 1.0)
+            level1 = min(rms/256.0, 1.0)
             level2 = level1**exponent
-            level = int(level2*scale)
+            level = int(level2*scale*10)
             logging.info("Level= %f %f %f %f", rms, level1, level2, level)
             #leftChannel = audioop.tomono(rawStream, 2, 1, 0)
             #rightChannel = audioop.tomono(rawStream, 2, 0, 1)

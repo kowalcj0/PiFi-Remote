@@ -11,6 +11,10 @@ import mpd
 from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 from LCDScreen import LCDScreen
 from MusicTrack import MusicTrack
+
+import audioop
+import errno
+import math
 #import SpectrumAnalyzer as sa
             
 logging.basicConfig(level=logging.DEBUG,
@@ -39,9 +43,6 @@ def createMPDClient():
     return mpc
 
 def computeRMS(fifoFile, scaleWidth):
-    import audioop
-    import errno
-    import math
     while True:
         try:
             rawData = os.read(fifoFile, 1024)

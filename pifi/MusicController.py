@@ -48,7 +48,7 @@ def computeRMS(fifoFile, scaleWidth):
         rawSamples = fifoFile.read(1024) 
         if rawSamples:
             rms = audioop.rms(rawSamples, 1) / 100.0
-            rms *= scaleWidth
+            rms = int(rms*scaleWidth)
             #leftChannel = audioop.tomono(rawStream, 2, 1, 0)
             #rightChannel = audioop.tomono(rawStream, 2, 0, 1)
             #stereoPeak = audioop.max(rawStream, 2)

@@ -4,9 +4,9 @@ import logging
 from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 from WaitForMultipleEvents import WaitForMultipleEvents
 
+
 class LCDScreen(object):
     mLcd = None
-    mIsOn = None
     mStop = None
     mLock = None
     mThread = None
@@ -19,8 +19,7 @@ class LCDScreen(object):
     mD2 = 0
     
     @classmethod
-    def init(cls, lcd, stopEvent, isOn):
-        cls.mIsOn = isOn
+    def init(cls, lcd, stopEvent):
         cls.mStop = stopEvent
         cls.mLcd = lcd
         cls.mController = WaitForMultipleEvents([cls.mUpdate1, cls.mUpdate2, cls.mStop])
@@ -35,14 +34,12 @@ class LCDScreen(object):
         with cls.mLock:
             cls.mLcd.clear()
             cls.mLcd.backlight(cls.mLcd.RED)
-            cls.mIsOn.set()
     
     @classmethod
     def switchOff(cls):
         with cls.mLock:
             cls.mLcd.clear()
             cls.mLcd.backlight(cls.mLcd.OFF)
-            cls.mIsOn.clear()
     
     @classmethod
     def setLines(cls, string1, delay1, string2, delay2):

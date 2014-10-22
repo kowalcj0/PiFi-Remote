@@ -106,7 +106,7 @@ def refreshTrack(changeEvent, stopEvent):
                     LCDScreen.setLine2("Volume {0!s}%       ".format(status['volume']), 1)
         except Exception as e:
             logging.error("Caught exception: %s (%s)", e , type(e))
-            mpc.close()
+            #mpc.close()
             mpc.disconnect() 
             mpc = createMPDClient()
             MusicTrack.init(mpc)

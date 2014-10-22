@@ -17,7 +17,7 @@ import errno
 import math
 #import SpectrumAnalyzer as sa
             
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(module)s.%(funcName)s: %(message)s',
                     filename='/var/log/pifi.log',
                     filemode='w')
@@ -52,6 +52,7 @@ def computeRMS(fifoFile, sampleSize, scale):
             level = min(rms / (2.0**8) * 50, 1.0)
             level = level**exponent
             level = int(level*scale)
+            logging.info("Level= %d", level)
             #leftChannel = audioop.tomono(rawStream, 2, 1, 0)
             #rightChannel = audioop.tomono(rawStream, 2, 0, 1)
             #stereoPeak = audioop.max(rawStream, 2)

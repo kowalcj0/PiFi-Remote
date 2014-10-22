@@ -38,17 +38,13 @@ def createMPDClient():
     mpc.crossfade(1)
     return mpc
 
-def computeRMS():
+def computeRMS(fifoFile, scaleWidth):
     import audioop
     import errno
     import math
-    
-    MPD_FIFO = '/tmp/mpd.fifo'
-    
     while True:
         try:
-            with open(MPD_FIFO) as fifo:
-                rawStream = os.read(fifo, 1024)
+            rawStream = os.read(fifoFile, 1024)
         except OSError as err:
             if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
                 rawStream = None
@@ -66,18 +62,18 @@ def computeRMS():
             #rightDB = 20 * math.log10(rightPeak) -74
                         
 def refreshRMS(changeEvent, stopEvent):
-    global mEnableRMSEvent
+    MPD_FIFO = '/tmp/mpd.fifo'
     #analyzer = sa.SpectrumAnalyzer(1024, 44100, 1, 1)
     logging.info("Job refreshRMS started")
-    with open(sa.MPD_FIFO) as fifo:
+    with open(MPD_FIFO) as fifo:
         while not stopEvent.is_set():
             if changeEvent.is_set():
-                analyzer.resetSmoothing()
+                #analyzer.resetSmoothing()
                 changeEvent.clear()
             if MusicTrack.getInfo() is not None:
-                n = analyzer.computeRMS(fifo, 16)
+                n = computeRMS(fifo, 16)
                 LCDScreen.setLine2("="*n + " "*(16-n))
-                sleep(0.001)
+                sleep(0.1)
     logging.info("Job refreshRMS stopped")
 
 def refreshTrack(changeEvent, stopEvent):

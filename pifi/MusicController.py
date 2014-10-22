@@ -70,7 +70,7 @@ def refreshRMS(changeEvent, stopEvent):
                 #analyzer.resetSmoothing()
                 changeEvent.clear()
             if MusicTrack.getInfo() is not None:
-                n = computeRMS(fifo, 1024, 16)
+                n = computeRMS(fifo, 2048, 16)
                 LCDScreen.setLine2("="*n + " "*(16-n))
                 sleep(0.1)
     logging.info("Job refreshRMS stopped")

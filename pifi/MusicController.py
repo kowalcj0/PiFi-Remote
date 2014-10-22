@@ -42,13 +42,16 @@ def createMPDClient():
     mpc.crossfade(1)
     return mpc
 
-def computeRMS(fifoFile, sampleSize, scaleWidth):
-    rms = 0
+def computeRMS(fifoFile, sampleSize, scale):
+    exponent = 5
+    level = 0
     try:
         rawSamples = fifoFile.read(sampleSize) 
         if rawSamples and len(rawSamples) == sampleSize:
-            rms = audioop.rms(rawSamples, 1) / 100.0
-            rms = int(rms*scaleWidth)
+            rms = audioop.rms(rawSamples, 1)
+            level = min(rms / (2.0**8) * 50, 1.0)
+            level = level**exponent
+            level = int(level*scale)
             #leftChannel = audioop.tomono(rawStream, 2, 1, 0)
             #rightChannel = audioop.tomono(rawStream, 2, 0, 1)
             #stereoPeak = audioop.max(rawStream, 2)
@@ -58,7 +61,7 @@ def computeRMS(fifoFile, sampleSize, scaleWidth):
             #rightDB = 20 * math.log10(rightPeak) -74
     except Exception as e:
         logging.error("%s", e)    
-    return rms
+    return level
                         
 def refreshRMS(changeEvent, stopEvent):
     MPD_FIFO = '/tmp/mpd.fifo'

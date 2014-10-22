@@ -14,15 +14,15 @@ from MusicTrack import MusicTrack
 #import SpectrumAnalyzer as sa
 
 def transformAudio():
-    import os
     import audioop
-    import time
     import errno
     import math
     
-    #Open the FIFO that MPD has created for us
-    #This represents the sample (44100:16:2) that MPD is currently "playing"
-    fifo = os.open('/tmp/mpd.fifo', os.O_RDONLY)
+    MPD_FIFO = '/tmp/mpd.fifo'
+    
+    # Open the FIFO that MPD has created
+    # This represents the sample (44100:16:1) that MPD is currently "playing"
+    fifo = os.open(MPD_FIFO, os.O_RDONLY)
     
     while True:
         try:

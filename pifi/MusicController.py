@@ -7,7 +7,6 @@ from time import sleep
 from evdev import InputDevice, ecodes
 from mpd import MPDClient
 
-
 from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 from LCDScreen import LCDScreen
 from MusicTrack import MusicTrack

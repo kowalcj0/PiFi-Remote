@@ -12,37 +12,7 @@ from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 from LCDScreen import LCDScreen
 from MusicTrack import MusicTrack
 #import SpectrumAnalyzer as sa
-
-def transformAudio():
-    import audioop
-    import errno
-    import math
-    
-    MPD_FIFO = '/tmp/mpd.fifo'
-    
-    # Open the FIFO that MPD has created
-    # This represents the sample (44100:16:1) that MPD is currently "playing"
-    fifo = os.open(MPD_FIFO, os.O_RDONLY)
-    
-    while True:
-        try:
-            rawStream = os.read(fifo, 1024)
-        except OSError as err:
-            if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
-                rawStream = None
-            else:
-                raise
-        if rawStream:
-            leftChannel = audioop.tomono(rawStream, 2, 1, 0)
-            rightChannel = audioop.tomono(rawStream, 2, 0, 1)
-            stereoPeak = audioop.max(rawStream, 2)
-            leftPeak = audioop.max(leftChannel, 2)
-            rightPeak = audioop.max(rightChannel, 2)
-            leftDB = 20 * math.log10(leftPeak) -74
-            rightDB = 20 * math.log10(rightPeak) -74
-            print(rightPeak, leftPeak, rightDB, leftDB)
             
-
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(module)s.%(funcName)s: %(message)s',
                     filename='/var/log/pifi.log',
@@ -67,7 +37,33 @@ def createMPDClient():
     mpc.repeat(1)
     mpc.crossfade(1)
     return mpc
+
+def computeRMS():
+    import audioop
+    import errno
+    import math
     
+    MPD_FIFO = '/tmp/mpd.fifo'
+    
+    while True:
+        try:
+            with open(MPD_FIFO) as fifo:
+                rawStream = os.read(fifo, 1024)
+        except OSError as err:
+            if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
+                rawStream = None
+            else:
+                raise
+        if rawStream:
+            logging.info("stream: len=%d", len(rawStream))
+            #leftChannel = audioop.tomono(rawStream, 2, 1, 0)
+            #rightChannel = audioop.tomono(rawStream, 2, 0, 1)
+            #stereoPeak = audioop.max(rawStream, 2)
+            #leftPeak = audioop.max(leftChannel, 2)
+            #rightPeak = audioop.max(rightChannel, 2)
+            #leftDB = 20 * math.log10(leftPeak) -74
+            #rightDB = 20 * math.log10(rightPeak) -74
+                        
 def refreshRMS(changeEvent, stopEvent):
     global mEnableRMSEvent
     analyzer = sa.SpectrumAnalyzer(1024, 44100, 1, 1)

@@ -52,7 +52,7 @@ def computeRMS(fifoFile, sampleSize, scale):
             level1 = min(rms/256.0, 1.0)
             level2 = level1**exponent
             level = int(level2*scale*10**(exponent-3))
-            logging.info("Level= %f %f %f %f", rms, level1, level2, level)
+            #logging.info("Level= %f %f %f %f", rms, level1, level2, level)
             #leftChannel = audioop.tomono(rawStream, 2, 1, 0)
             #rightChannel = audioop.tomono(rawStream, 2, 0, 1)
             #stereoPeak = audioop.max(rawStream, 2)

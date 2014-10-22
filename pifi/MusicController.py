@@ -44,15 +44,15 @@ def computeRMS(fifoFile, scaleWidth):
     import math
     while True:
         try:
-            rawStream = os.read(fifoFile, 1024)
+            rawData = os.read(fifoFile, 1024)
         except OSError as err:
             if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
-                rawStream = None
+                rawData = None
                 logging.debug("AGAIN/WOULDBLOCK: %s", err)
             else:
                 logging.error("%s", err)
-        if rawStream:
-            logging.debug("stream: len=%d", len(rawStream))
+        if rawData:
+            logging.debug("stream: len=%d", len(rawData))
             #leftChannel = audioop.tomono(rawStream, 2, 1, 0)
             #rightChannel = audioop.tomono(rawStream, 2, 0, 1)
             #stereoPeak = audioop.max(rawStream, 2)

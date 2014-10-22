@@ -68,7 +68,7 @@ def refreshRMS(changeEvent, stopEvent):
     with open(MPD_FIFO) as fifo:
         while not stopEvent.is_set():
             if MpdTrack.getInfo() is not None:
-                n = computeRMS(fifo, 2048, 16)
+                n = computeRMS(fifo, 1024, 16)
                 LCDScreen.setLine2("="*n + " "*(16-n))
                 sleep(0.1)
     logging.info("Job refreshRMS stopped")

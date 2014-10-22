@@ -47,8 +47,7 @@ class MusicTrack(object):
                     item2 = current['artist']
                 else:
                     item2 = ''
-            item3 = status['volume']
-            msg = [item1, item2, item3]
+            msg = [item1, item2]
         with cls.mLock:
             cls.mMessage = msg
         return msg

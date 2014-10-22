@@ -49,7 +49,7 @@ def computeRMS(fifoFile, sampleSize, scale):
         rawSamples = fifoFile.read(sampleSize) 
         if rawSamples and len(rawSamples) == sampleSize:
             rms = audioop.rms(rawSamples, 1)
-            level = min(rms / (2.0**8) * 50, 1.0)
+            level = min(rms/2.0**8, 1.0)
             level = level**exponent
             level = int(level*scale)
             logging.info("Level= %d", level)

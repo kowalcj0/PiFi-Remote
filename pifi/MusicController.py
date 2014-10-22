@@ -43,18 +43,12 @@ def createMPDClient():
     return mpc
 
 def computeRMS(fifoFile, scaleWidth):
-    while True:
-        try:
-            rawSamples = fifoFile.read(1024) 
-        except OSError as err:
-            if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
-                rawSamples = None
-                logging.debug("AGAIN/WOULDBLOCK: %s", err)
-            else:
-                logging.error("%s", err)
+    rms = 0
+    try:
+        rawSamples = fifoFile.read(1024) 
         if rawSamples:
-            rms = audioop.rms(rawSamples, 1)
-            logging.debug("data len=%d rms=%f", len(rawSamples), rms)
+            rms = audioop.rms(rawSamples, 1) / 100.0
+            rms *= scaleWidth
             #leftChannel = audioop.tomono(rawStream, 2, 1, 0)
             #rightChannel = audioop.tomono(rawStream, 2, 0, 1)
             #stereoPeak = audioop.max(rawStream, 2)
@@ -62,6 +56,9 @@ def computeRMS(fifoFile, scaleWidth):
             #rightPeak = audioop.max(rightChannel, 2)
             #leftDB = 20 * math.log10(leftPeak) -74
             #rightDB = 20 * math.log10(rightPeak) -74
+    except Exception as e:
+        logging.error("%s", e)    
+    return rms
                         
 def refreshRMS(changeEvent, stopEvent):
     MPD_FIFO = '/tmp/mpd.fifo'

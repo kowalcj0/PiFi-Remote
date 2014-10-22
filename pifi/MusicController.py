@@ -3,17 +3,17 @@ import os
 import signal
 import sys
 import threading
+import logging
 from time import sleep
-from evdev import InputDevice, ecodes
-from mpd import MPDClient
+from evdev import InputDevice, categorize, ecodes
+import mpd
 
 from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 from LCDScreen import LCDScreen
 from MusicTrack import MusicTrack
 import SpectrumAnalyzer as sa
 
-import logging
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(module)s.%(funcName)s: %(message)s',
                     filename='/var/log/pifi.log',
                     filemode='w')
@@ -27,25 +27,20 @@ def exitHandler(signal, frame):
         logging.error("Unexpected error: %s", sys.exc_info()[0])
 
 def createMPDClient():
-    mpc = MPDClient()           
-    mpc.timeout = 3                 # network timeout in seconds (floats allowed), default: None
+    mpc = mpd.MPDClient()           
+    mpc.timeout = None              # network timeout in seconds (floats allowed), default: None
     mpc.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
     mpc.connect("localhost", 6600)  # connect to localhost:6600
     mpc.random(0)
-    mpc.crossfade(3)
     mpc.consume(0)
+    mpc.single(0)
+    mpc.repeat(1)
+    mpc.crossfade(1)
     return mpc
-            
-def getMPDStatus(name):
-    mpc = createMPDClient()
-    status = mpc.status()
-    mpc.close()
-    mpc.disconnect()
-    return status[name]
     
 def refreshRMS(changeEvent, stopEvent):
     global mEnableRMSEvent
-    analyzer = sa.SpectrumAnalyzer(1024, 44100, 8, 5)
+    analyzer = sa.SpectrumAnalyzer(1024, 44100, 1, 1)
     logging.info("Job refreshRMS started")
     with open(sa.MPD_FIFO) as fifo:
         while not stopEvent.is_set():
@@ -55,130 +50,99 @@ def refreshRMS(changeEvent, stopEvent):
             if MusicTrack.getInfo() is not None:
                 n = analyzer.computeRMS(fifo, 16)
                 LCDScreen.setLine2("="*n + " "*(16-n))
+                sleep(0.001)
     logging.info("Job refreshRMS stopped")
 
 def refreshTrack(changeEvent, stopEvent):
     mpc = createMPDClient()
     MusicTrack.init(mpc)
-    prevTitle = None
-    prevVol = None
+    prevTrack = None
     logging.info("Job refreshTrack started")
     while not stopEvent.is_set():
         try:
-            mpc.idle()
-        except:
-            pass
-        track = MusicTrack.retrieve()
-        logging.info("Track=%s", track)
-        if track is not None and track[0] != prevTitle:
-            changeEvent.set()
-            LCDScreen.switchOn()
-            LCDScreen.setLine1(track[0], 0)
-            prevTitle = track[0]
-            prevVol = track[2]
-        if track is not None:
-            if prevVol == track[2]:
-                LCDScreen.setLine2(track[1]+" "*(16-len(track[1])), 1)
-            else:
-                LCDScreen.setLine2("Volume {0!s}%       ".format(track[2]), 1)
-            prevVol = track[2]
-        else:
-            LCDScreen.switchOff()
-            prevTitle = None
-            prevVol = None
+            subsystem = mpc.idle('player','mixer')[0]
+            if subsystem == 'player':
+                track = MusicTrack.retrieve()
+                logging.info("Track: %s", track)
+                if track is not None:
+                    if prevTrack is None or track[0] != prevTrack[0]:
+                        changeEvent.set()
+                        LCDScreen.switchOn()
+                        LCDScreen.setLine1(track[0], 0)
+                    if prevTrack is None or track[1] != prevTrack[1]:
+                        LCDScreen.setLine2(track[1]+" "*(16-len(track[1])), 1)
+                    prevTrack = track
+                else:
+                    LCDScreen.switchOff()
+                    prevTrack = None
+            elif subsystem == 'mixer':
+                status = mpc.status()
+                logging.info("Volume change: %s", status['volume'])
+                if status['state'] != 'stop':
+                    LCDScreen.setLine2("Volume {0!s}%       ".format(status['volume']), 1)
+        except Exception as e:
+            logging.error("Caught exception: %s (%s)", e , type(e))
+            mpc.close()
+            mpc.disconnect() 
+            mpc = createMPDClient()
+            MusicTrack.init(mpc)
     mpc.close()
     mpc.disconnect() 
     logging.info("Job refreshTrack stopped")
-    
-def monitorButtons(lcd, stopEvent, isOn):
-    pressing = False
-    logging.info("Job monitorButtons started")
-    while not stopEvent.is_set():
-        if (lcd.buttonPressed(lcd.LEFT)):
-            if not pressing:
-                os.system("mpc prev")
-                pressing = True
-        elif (lcd.buttonPressed(lcd.RIGHT)):
-            if not pressing:
-                os.system("mpc next")
-                pressing = True
-        elif (lcd.buttonPressed(lcd.UP)):
-            if not pressing:
-                os.system("mpc volume +2")
-                vol = getMPDStatus('volume')
-                LCDScreen.setLine2("Volume {0!s}%      ".format(vol), 1)
-                pressing = True
-        elif (lcd.buttonPressed(lcd.DOWN)):
-            if not pressing:
-                os.system("mpc volume -2")
-                vol = getMPDStatus('volume')
-                LCDScreen.setLine2("Volume {0!s}%      ".format(vol), 1)
-                pressing = True
-        elif (lcd.buttonPressed(lcd.SELECT)):
-            if not pressing:
-                pressing = True
-                if isOn.is_set():
-                    os.system("mpc stop")
-                    isOn.clear()
-                else:
-                    os.system("mpc play")
-                    isOn.set()
-        else:
-            pressing = False
-        sleep(0.5)
-    logging.info("Job monitorButtons stopped")
     
 def monitorRemote():
     dev = InputDevice('/dev/input/event0')
     logging.info("Job monitorRemote started")
     for event in dev.read_loop():
-        logging.debug(event)
+        #logging.debug(str(categorize(event)))
         if event.type != ecodes.EV_KEY or event.value != 1:
+            sleep(0.1)
             continue
-        if event.code == ecodes.KEY_LEFT:
-            os.system("mpc prev")
-        elif event.code == ecodes.KEY_RIGHT:
-            os.system("mpc next")
-        elif event.code == ecodes.KEY_UP:
-            os.system("mpc volume +2")
-            vol = getMPDStatus('volume')
-            LCDScreen.setLine2("Volume {0!s}%     ".format(vol), 1)
-        elif event.code == ecodes.KEY_DOWN:
-            os.system("mpc volume -2")
-            vol = getMPDStatus('volume')
-            LCDScreen.setLine2("Volume {0!s}%     ".format(vol), 1)
-        elif event.code == ecodes.KEY_ENTER:
-            os.system("mpc toggle")
-        elif event.code == ecodes.KEY_ESC:
-            if mIsOn.is_set():
-                os.system("mpc stop")
-                mIsOn.clear()
-            else:
-                os.system("mpc play")
-                mIsOn.set()
-        elif event.code == ecodes.KEY_A:
-            break
+        try:
+            mpc = createMPDClient()
+            status = mpc.status()
+            logging.debug("Status: {}".format(status))
+            if event.code == ecodes.KEY_LEFT:
+                mpc.previous()
+            elif event.code == ecodes.KEY_RIGHT:
+                mpc.next()
+            elif event.code == ecodes.KEY_UP:
+                mpc.setvol(int(status['volume'])+2)
+            elif event.code == ecodes.KEY_DOWN:
+                mpc.setvol(int(status['volume'])-2)
+            elif event.code == ecodes.KEY_ENTER:
+                if status['state'] == 'play':
+                    mpc.pause()
+                else:
+                    mpc.play()
+            elif event.code == ecodes.KEY_ESC:
+                if status['state'] == 'stop':
+                    mpc.play()
+                else:
+                    mpc.stop()
+            elif event.code == ecodes.KEY_A:
+                break
+            mpc.close()
+            mpc.disconnect()
+        except Exception as e:
+            logging.error("Caught exception: %s (%s)", e , type(e)) 
     logging.info("Job monitorRemote stopped")
     
 def startJobs():
     global mChangeEvent
     global mStop
-    global mIsOn
     global mThreadTrack
     global mThreadRMS
-    global mThreadLCDButtons
+
+    mStop = threading.Event()
+    mChangeEvent = threading.Event()
     
     # Use busnum = 0 for raspi version 1 (256MB) and busnum = 1 for version 2
     lcd = Adafruit_CharLCDPlate(busnum = 0)
-        
-    mChangeEvent = threading.Event()
-    mStop = threading.Event()
-    mIsOn = threading.Event() 
     
-    LCDScreen.init(lcd, mStop, mIsOn)
-    sleep(2)
+    LCDScreen.init(lcd, mStop)
     
-    logging.info("MPD display job starting...")
+    logging.info("Track display job starting...")
     mThreadTrack = threading.Thread(target=refreshTrack, args=(mChangeEvent, mStop))
     mThreadTrack.start()
     
@@ -186,26 +150,18 @@ def startJobs():
     mThreadRMS = threading.Thread(target=refreshRMS, args=(mChangeEvent, mStop))
     mThreadRMS.start()
     
-    logging.info("LCD buttons monitor job starting...")
-    mThreadLCDButtons = threading.Thread(target=monitorButtons, args=(lcd, mStop, mIsOn))
-    mThreadLCDButtons.start()
     print "Jobs started..."
+    sleep(1)
+    LCDScreen.switchOff()
 
 def stopJobs():
     global mChangeEvent
     global mStop
-    global mIsOn
     global mThreadTrack
     global mThreadRMS
-    global mThreadLCDButtons
     
     # Redundant with signal handler
     mStop.set()
-    
-    logging.info("LCD buttons monitor job stopping...")
-    if mThreadLCDButtons is not None:
-        mThreadLCDButtons.join(3)
-    mThreadLCDButtons = None
     
     logging.info("RMS display job stopping...")
     if mThreadRMS is not None:
@@ -221,7 +177,6 @@ def stopJobs():
     
     mChangeEvent = None
     mStop = None
-    mIsOn = None
     logging.info("Jobs stopped.")
     
 def transformAudio():
@@ -262,14 +217,14 @@ if __name__ == '__main__':
     logging.info("mpd outputs: " + str(mpc.outputs()))
     logging.info("mpd stats: " + str(mpc.stats()))
     mpc.close()
-    mpc.disconnect()   
+    mpc.disconnect()
+    mpc = None
     
     try:
         startJobs()
         monitorRemote()
     except Exception as e:
-        logging.error("Caught exception: %s", e)
-        raise
+        logging.error("Critical exception: %s", e)
         
     stopJobs()
 

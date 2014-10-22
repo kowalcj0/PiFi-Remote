@@ -45,7 +45,7 @@ def createMPDClient():
 def computeRMS(fifoFile, scaleWidth):
     while True:
         try:
-            rawData = os.read(fifoFile, 1024)
+            rawData = fifoFile.read(1024) 
         except OSError as err:
             if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
                 rawData = None

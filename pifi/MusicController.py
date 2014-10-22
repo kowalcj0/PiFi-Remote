@@ -70,9 +70,9 @@ def refreshRMS(changeEvent, stopEvent):
     logging.info("Job refreshRMS started")
     with open(MPD_FIFO) as fifo:
         while not stopEvent.is_set():
-            if changeEvent.is_set():
-                #analyzer.resetSmoothing()
-                changeEvent.clear()
+            #if changeEvent.is_set():
+            #    analyzer.resetSmoothing()
+            #    changeEvent.clear()
             if MusicTrack.getInfo() is not None:
                 n = computeRMS(fifo, 2048, 16)
                 LCDScreen.setLine2("="*n + " "*(16-n))

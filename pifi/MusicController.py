@@ -4,18 +4,15 @@ import signal
 import sys
 import threading
 import logging
+import audioop
 from time import sleep
+
 from evdev import InputDevice, categorize, ecodes
 import mpd
 
 from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 from LCDScreen import LCDScreen
-from MusicTrack import MusicTrack
-
-import audioop
-import errno
-import math
-#import SpectrumAnalyzer as sa
+from MpdTrack import MpdTrack
             
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(module)s.%(funcName)s: %(message)s',

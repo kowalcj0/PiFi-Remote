@@ -52,8 +52,9 @@ def computeRMS():
         except OSError as err:
             if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
                 rawStream = None
+                logging.debug("AGAIN/WOULDBLOCK: %s", err)
             else:
-                raise
+                logging.error("%s", err)
         if rawStream:
             logging.debug("stream: len=%d", len(rawStream))
             #leftChannel = audioop.tomono(rawStream, 2, 1, 0)
@@ -66,7 +67,7 @@ def computeRMS():
                         
 def refreshRMS(changeEvent, stopEvent):
     global mEnableRMSEvent
-    analyzer = sa.SpectrumAnalyzer(1024, 44100, 1, 1)
+    #analyzer = sa.SpectrumAnalyzer(1024, 44100, 1, 1)
     logging.info("Job refreshRMS started")
     with open(sa.MPD_FIFO) as fifo:
         while not stopEvent.is_set():

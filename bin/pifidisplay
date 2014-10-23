@@ -11,7 +11,7 @@
 ### END INIT INFO
  
 # Daemon script to call
-DIR=/usr/share/adafruit/webide/repositories/pi.hifi/pifi
+DIR=/usr/local/bin
 DAEMON=$DIR/pifi-display
 DAEMON_NAME=PiFi-Display
  

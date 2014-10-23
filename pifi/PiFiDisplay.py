@@ -4,14 +4,16 @@ import signal
 import sys
 import threading
 import logging
+import audioop
 from time import sleep
+
 from evdev import InputDevice, categorize, ecodes
 import mpd
+
 from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 from LCDScreen import LCDScreen
-from MusicTrack import MusicTrack
-import SpectrumAnalyzer as sa
-
+from MpdTrack import MpdTrack
+            
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(module)s.%(funcName)s: %(message)s',
                     filename='/var/log/pifi.log',
@@ -36,9 +38,35 @@ def createMPDClient():
     mpc.repeat(1)
     mpc.crossfade(1)
     return mpc
-    
+
+def computeRMS(fifoFile, sampleSize, scale):
+    exponent = 8
+    level = 0
+    try:
+        rawSamples = fifoFile.read(sampleSize) 
+        if rawSamples and len(rawSamples) == sampleSize:
+            rms = float(audioop.rms(rawSamples, 1))
+            level1 = min(rms/256.0, 1.0)
+            level2 = level1**exponent
+            level = int(level2*scale*10**(exponent-3))
+            #logging.info("Level= %f %f %f %f", rms, level1, level2, level)
+    except Exception as e:
+        logging.error("%s", e)    
+    return level
+                        
 def refreshRMS(changeEvent, stopEvent):
-    global mEnableRMSEvent
+    MPD_FIFO = '/tmp/mpd.fifo'
+    logging.info("Job refreshRMS started")
+    with open(MPD_FIFO) as fifo:
+        while not stopEvent.is_set():
+            if MpdTrack.getInfo() is not None:
+                n = computeRMS(fifo, 2024, 16)
+                LCDScreen.setLine2("="*n + " "*(16-n))
+                sleep(0.01)
+    logging.info("Job refreshRMS stopped")
+
+def refreshRMS2(changeEvent, stopEvent):
+    import SpectrumAnalyzer as sa
     analyzer = sa.SpectrumAnalyzer(1024, 44100, 8, 5)
     logging.info("Job refreshRMS started")
     with open(sa.MPD_FIFO) as fifo:
@@ -53,14 +81,14 @@ def refreshRMS(changeEvent, stopEvent):
 
 def refreshTrack(changeEvent, stopEvent):
     mpc = createMPDClient()
-    MusicTrack.init(mpc)
+    MpdTrack.init(mpc)
     prevTrack = None
     logging.info("Job refreshTrack started")
     while not stopEvent.is_set():
         try:
             subsystem = mpc.idle('player','mixer')[0]
             if subsystem == 'player':
-                track = MusicTrack.retrieve()
+                track = MpdTrack.retrieve()
                 logging.info("Track: %s", track)
                 if track is not None:
                     if prevTrack is None or track[0] != prevTrack[0]:
@@ -80,54 +108,13 @@ def refreshTrack(changeEvent, stopEvent):
                     LCDScreen.setLine2("Volume {0!s}%       ".format(status['volume']), 1)
         except Exception as e:
             logging.error("Caught exception: %s (%s)", e , type(e))
-            mpc.close()
+            #mpc.close()
             mpc.disconnect() 
             mpc = createMPDClient()
-            MusicTrack.init(mpc)
+            MpdTrack.init(mpc)
     mpc.close()
     mpc.disconnect() 
     logging.info("Job refreshTrack stopped")
-    
-def monitorButtons(lcd, stopEvent):
-    mpc = createMPDClient()
-    pressing = False
-    logging.info("Job monitorButtons started")
-    while not stopEvent.is_set():
-        try:
-            if (lcd.buttonPressed(lcd.LEFT)):
-                if not pressing:
-                    mpc.previous()
-                    pressing = True
-            elif (lcd.buttonPressed(lcd.RIGHT)):
-                if not pressing:
-                    mpc.next()
-                    pressing = True
-            elif (lcd.buttonPressed(lcd.UP)):
-                if not pressing:
-                    status = mpc.status()
-                    mpc.setvol(int(status['volume'])+2)
-                    pressing = True
-            elif (lcd.buttonPressed(lcd.DOWN)):
-                if not pressing:
-                    status = mpc.status()
-                    mpc.setvol(int(status['volume'])-2)
-                    pressing = True
-            elif (lcd.buttonPressed(lcd.SELECT)):
-                if not pressing:
-                    pressing = True
-                    status = mpc.status()
-                    if status['state'] == 'stop':
-                        mpc.play()
-                    else:
-                        mpc.stop()
-            else:
-                pressing = False
-        except Exception as e:
-            logging.error("Caught exception: %s (%s)", e , type(e))
-        sleep(0.4)
-    mpc.close()
-    mpc.disconnect()
-    logging.info("Job monitorButtons stopped")
     
 def monitorRemote():
     dev = InputDevice('/dev/input/event0')
@@ -189,9 +176,9 @@ def startJobs():
     mThreadRMS = threading.Thread(target=refreshRMS, args=(mChangeEvent, mStop))
     mThreadRMS.start()
     
-    print "Jobs started..."
     sleep(1)
     LCDScreen.switchOff()
+    logging.info("Jobs started...")
 
 def stopJobs():
     global mChangeEvent
@@ -217,35 +204,6 @@ def stopJobs():
     mChangeEvent = None
     mStop = None
     logging.info("Jobs stopped.")
-    
-def transformAudio():
-    import os
-    import audioop
-    import time
-    import errno
-    import math
-    
-    #Open the FIFO that MPD has created for us
-    #This represents the sample (44100:16:2) that MPD is currently "playing"
-    fifo = os.open('/tmp/mpd.fifo', os.O_RDONLY)
-    
-    while 1:
-        try:
-            rawStream = os.read(fifo, 1024)
-        except OSError as err:
-            if err.errno == errno.EAGAIN or err.errno == errno.EWOULDBLOCK:
-                rawStream = None
-            else:
-                raise
-        if rawStream:
-            leftChannel = audioop.tomono(rawStream, 2, 1, 0)
-            rightChannel = audioop.tomono(rawStream, 2, 0, 1)
-            stereoPeak = audioop.max(rawStream, 2)
-            leftPeak = audioop.max(leftChannel, 2)
-            rightPeak = audioop.max(rightChannel, 2)
-            leftDB = 20 * math.log10(leftPeak) -74
-            rightDB = 20 * math.log10(rightPeak) -74
-            print(rightPeak, leftPeak, rightDB, leftDB)
 
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, exitHandler)
@@ -269,4 +227,3 @@ if __name__ == '__main__':
 
     print "Terminating musiccontroller."     
     exit(0)
-    

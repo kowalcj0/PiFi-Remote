@@ -11,8 +11,8 @@
 ### END INIT INFO
  
 # Daemon script to call
-DIR=/usr/share/adafruit/webide/repositories/pi.hifi/pifi
-DAEMON=$DIR/PiFiRemote.py
+DIR=/usr/local/bin
+DAEMON=$DIR/pifi-remote
 DAEMON_NAME=PiFi-Remote
  
 # This next line determines what user the script runs as.

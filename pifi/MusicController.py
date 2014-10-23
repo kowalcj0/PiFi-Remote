@@ -66,7 +66,7 @@ def refreshRMS(changeEvent, stopEvent):
     logging.info("Job refreshRMS stopped")
 
 def refreshRMS2(changeEvent, stopEvent):
-    global mEnableRMSEvent
+    import SpectrumAnalyzer as sa
     analyzer = sa.SpectrumAnalyzer(1024, 44100, 8, 5)
     logging.info("Job refreshRMS started")
     with open(sa.MPD_FIFO) as fifo:
@@ -78,7 +78,6 @@ def refreshRMS2(changeEvent, stopEvent):
                 n = analyzer.computeRMS(fifo, 16)
                 LCDScreen.setLine2("="*n + " "*(16-n))
     logging.info("Job refreshRMS stopped")
-
 
 def refreshTrack(changeEvent, stopEvent):
     mpc = createMPDClient()

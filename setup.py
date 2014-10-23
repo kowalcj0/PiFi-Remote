@@ -60,7 +60,7 @@ setup(
     ],
 
     # What does your project relate to?
-    keywords='music mpd hifi raspberry pi rpi',
+    keywords='music hifi mpd raspberry pi rpi',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().

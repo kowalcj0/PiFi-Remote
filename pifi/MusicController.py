@@ -77,6 +77,7 @@ def refreshRMS2(changeEvent, stopEvent):
             if MusicTrack.getInfo() is not None:
                 n = analyzer.computeRMS(fifo, 16)
                 LCDScreen.setLine2("="*n + " "*(16-n))
+                sleep(0.01)
     logging.info("Job refreshRMS stopped")
 
 def refreshTrack(changeEvent, stopEvent):
@@ -108,7 +109,6 @@ def refreshTrack(changeEvent, stopEvent):
                     LCDScreen.setLine2("Volume {0!s}%       ".format(status['volume']), 1)
         except Exception as e:
             logging.error("Caught exception: %s (%s)", e , type(e))
-            #mpc.close()
             mpc.disconnect() 
             mpc = createMPDClient()
             MpdTrack.init(mpc)
@@ -168,16 +168,17 @@ def startJobs():
     
     LCDScreen.init(lcd, mStop)
     
-    logging.info("Track display job starting...")
-    mThreadTrack = threading.Thread(target=refreshTrack, args=(mChangeEvent, mStop))
-    mThreadTrack.start()
-    
     logging.info("RMS display job starting...")
     mThreadRMS = threading.Thread(target=refreshRMS, args=(mChangeEvent, mStop))
     mThreadRMS.start()
     
     sleep(1)
     LCDScreen.switchOff()
+    
+    logging.info("Track display job starting...")
+    mThreadTrack = threading.Thread(target=refreshTrack, args=(mChangeEvent, mStop))
+    mThreadTrack.start()
+    
     logging.info("Jobs started...")
 
 def stopJobs():
@@ -206,6 +207,7 @@ def stopJobs():
     logging.info("Jobs stopped.")
 
 if __name__ == '__main__':
+    logging.info("starting %s", __file__)  
     signal.signal(signal.SIGINT, exitHandler)
     signal.signal(signal.SIGTERM, exitHandler)
     
@@ -225,6 +227,6 @@ if __name__ == '__main__':
         
     stopJobs()
 
-    print "Terminating musiccontroller."     
+    logging.info("terminated")      
     exit(0)
     

@@ -56,15 +56,29 @@ def computeRMS(fifoFile, sampleSize, scale):
                         
 def refreshRMS(changeEvent, stopEvent):
     MPD_FIFO = '/tmp/mpd.fifo'
-    #analyzer = sa.SpectrumAnalyzer(1024, 44100, 1, 1)
     logging.info("Job refreshRMS started")
     with open(MPD_FIFO) as fifo:
         while not stopEvent.is_set():
             if MpdTrack.getInfo() is not None:
-                n = computeRMS(fifo, 1024, 16)
+                n = computeRMS(fifo, 2024, 16)
                 LCDScreen.setLine2("="*n + " "*(16-n))
                 sleep(0.01)
     logging.info("Job refreshRMS stopped")
+
+def refreshRMS2(changeEvent, stopEvent):
+    global mEnableRMSEvent
+    analyzer = sa.SpectrumAnalyzer(1024, 44100, 8, 5)
+    logging.info("Job refreshRMS started")
+    with open(sa.MPD_FIFO) as fifo:
+        while not stopEvent.is_set():
+            if changeEvent.is_set():
+                analyzer.resetSmoothing()
+                changeEvent.clear()
+            if MusicTrack.getInfo() is not None:
+                n = analyzer.computeRMS(fifo, 16)
+                LCDScreen.setLine2("="*n + " "*(16-n))
+    logging.info("Job refreshRMS stopped")
+
 
 def refreshTrack(changeEvent, stopEvent):
     mpc = createMPDClient()

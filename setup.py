@@ -18,7 +18,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # http://packaging.python.org/en/latest/tutorial.html#version
-    version='1.0.0',
+    version='1.1.0',
 
     description='Hi Fi music hub on Raspberry Pi',
     long_description=read('README'),
@@ -72,8 +72,8 @@ setup(
     # https://packaging.python.org/en/latest/technical.html#install-requires-vs-requirements-files
     install_requires=['python-mpd2',
                     'evdev',
-                    'RPi.GPIO',
-                    'numpy'],
+                    'numpy',
+                    'RPi.GPIO'],
 
     # If there are data files included in your packages that need to be
     # installed, specify them here.  If using Python 2.6 or less, then these

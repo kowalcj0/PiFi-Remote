@@ -11,7 +11,7 @@
 ### END INIT INFO
  
 # Daemon script to call
-DIR=.
+DIR=/usr/share/adafruit/webide/repositories/pi.hifi/pifi
 DAEMON=$DIR/MusicController.py
 DAEMON_NAME=musiccontroller
  

@@ -132,7 +132,33 @@ class SpectrumAnalyzer(object):
         scaledSpectrum = self.scaleList(spectrum, scaleWidth)
         
         return (self.bins, scaledSpectrum)
-            
+    
+    def ComputeLevels(data, chunk, samplerate):
+        # Use FFT to calculate volume for each frequency
+         
+        # Convert raw sound data to Numpy array
+        fmt = "%dH"%(len(data)/2)
+        data2 = struct.unpack(fmt, data)
+        data2 = numpy.array(data2, dtype='h')
+         
+        # Apply FFT
+        fourier = numpy.fft.fft(data2)
+        ffty = numpy.abs(fourier[0:len(fourier)/2])/1000
+        ffty1=ffty[:len(ffty)/2]
+        ffty2=ffty[len(ffty)/2::]+2
+        ffty2=ffty2[::-1]
+        ffty=ffty1+ffty2
+        ffty=numpy.log(ffty)-2
+        
+        fourier = list(ffty)[4:-4]
+        fourier = fourier[:len(fourier)/2]
+        
+        size = len(fourier)
+         
+        # Add up for 6 lights
+        levels = [sum(fourier[i:(i+size/6)]) for i in xrange(0, size, size/6)][:6]
+        
+        return levels
             
 if __name__ == "__main__":
     analyzer = SpectrumAnalyzer(SAMPLE_SIZE, SAMPLING_RATE, FIRST_SELECTED_BIN, NUMBER_OF_SELECTED_BINS)

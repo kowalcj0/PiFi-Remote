@@ -50,13 +50,6 @@ def computeRMS(fifoFile, sampleSize, scale):
             level2 = level1**exponent
             level = int(level2*scale*10**(exponent-3))
             #logging.info("Level= %f %f %f %f", rms, level1, level2, level)
-            #leftChannel = audioop.tomono(rawStream, 2, 1, 0)
-            #rightChannel = audioop.tomono(rawStream, 2, 0, 1)
-            #stereoPeak = audioop.max(rawStream, 2)
-            #leftPeak = audioop.max(leftChannel, 2)
-            #rightPeak = audioop.max(rightChannel, 2)
-            #leftDB = 20 * math.log10(leftPeak) -74
-            #rightDB = 20 * math.log10(rightPeak) -74
     except Exception as e:
         logging.error("%s", e)    
     return level

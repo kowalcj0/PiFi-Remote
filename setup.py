@@ -21,7 +21,7 @@ setup(
     version='1.1.0',
 
     description='Hi Fi music hub on Raspberry Pi',
-    long_description=read('README'),
+    long_description=read('README.md'),
 
     # The project's main homepage.
     url='https://bitbucket.org/bertrandboichon/pi.hifi',
@@ -93,7 +93,9 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
         'console_scripts': [
-            'MusicController=MusicController:main',
+            'MusicController = pifi.MusicController:main',
+            'pifi-display = pifi.PiFiDisplay:main',
+            'pifi-remote = pifi.PiFiRemote:main',
         ],
     },
 )

@@ -1,3 +1,3 @@
-__all__ = ['Adafruit_CharLCDPlate','WaitForMultipleEvents', 'LCDScreen', 'MusicController', 
-	   'Adafruit_I2C.py','MusicTrack','SpectrumAnalyzer']
+__all__ = ['Adafruit_CharLCDPlate','WaitForMultipleEvents', 'LCDScreen', 'MusicController', 'PiFiDisplay',
+	   'Adafruit_I2C.py','MpdTrack','SpectrumAnalyzer']
 

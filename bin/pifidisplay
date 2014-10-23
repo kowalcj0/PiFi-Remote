@@ -12,7 +12,7 @@
  
 # Daemon script to call
 DIR=/usr/share/adafruit/webide/repositories/pi.hifi/pifi
-DAEMON=$DIR/PiFiDisplay.py
+DAEMON=$DIR/pifi-display
 DAEMON_NAME=PiFi-Display
  
 # This next line determines what user the script runs as.

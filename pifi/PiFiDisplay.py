@@ -4,10 +4,9 @@ import signal
 import sys
 import threading
 import logging
-import audioop
 from time import sleep
 
-from evdev import InputDevice, categorize, ecodes
+import audioop
 import mpd
 
 from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
@@ -16,7 +15,7 @@ from MpdTrack import MpdTrack
             
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(module)s.%(funcName)s: %(message)s',
-                    filename='/var/log/pifi.log',
+                    filename='/var/log/pifi-display.log',
                     filemode='w')
 
 def exitHandler(signal, frame):
@@ -116,44 +115,6 @@ def refreshTrack(changeEvent, stopEvent):
     mpc.disconnect() 
     logging.info("Job refreshTrack stopped")
     
-def monitorRemote():
-    dev = InputDevice('/dev/input/event0')
-    logging.info("Job monitorRemote started")
-    for event in dev.read_loop():
-        #logging.debug(str(categorize(event)))
-        if event.type != ecodes.EV_KEY or event.value != 1:
-            sleep(0.1)
-            continue
-        try:
-            mpc = createMPDClient()
-            status = mpc.status()
-            logging.debug("Status: {}".format(status))
-            if event.code == ecodes.KEY_LEFT:
-                mpc.previous()
-            elif event.code == ecodes.KEY_RIGHT:
-                mpc.next()
-            elif event.code == ecodes.KEY_UP:
-                mpc.setvol(int(status['volume'])+2)
-            elif event.code == ecodes.KEY_DOWN:
-                mpc.setvol(int(status['volume'])-2)
-            elif event.code == ecodes.KEY_ENTER:
-                if status['state'] == 'play':
-                    mpc.pause()
-                else:
-                    mpc.play()
-            elif event.code == ecodes.KEY_ESC:
-                if status['state'] == 'stop':
-                    mpc.play()
-                else:
-                    mpc.stop()
-            elif event.code == ecodes.KEY_A:
-                break
-            mpc.close()
-            mpc.disconnect()
-        except Exception as e:
-            logging.error("Caught exception: %s (%s)", e , type(e)) 
-    logging.info("Job monitorRemote stopped")
-    
 def startJobs():
     global mChangeEvent
     global mStop
@@ -168,17 +129,15 @@ def startJobs():
     
     LCDScreen.init(lcd, mStop)
     
-    logging.info("Track display job starting...")
-    mThreadTrack = threading.Thread(target=refreshTrack, args=(mChangeEvent, mStop))
-    mThreadTrack.start()
-    
     logging.info("RMS display job starting...")
     mThreadRMS = threading.Thread(target=refreshRMS, args=(mChangeEvent, mStop))
     mThreadRMS.start()
     
     sleep(1)
     LCDScreen.switchOff()
-    logging.info("Jobs started...")
+    
+    logging.info("Track display job starting...")
+    refreshTrack(mChangeEvent, mStop)
 
 def stopJobs():
     global mChangeEvent
@@ -194,11 +153,6 @@ def stopJobs():
         mThreadRMS.join(3)
     mThreadRMS = None
     
-    logging.info("MPD display job stopping...")
-    if mThreadTrack is not None:
-        mThreadTrack.join(3)
-    mThreadTrack = None
-    
     LCDScreen.switchOff()
     
     mChangeEvent = None
@@ -206,24 +160,24 @@ def stopJobs():
     logging.info("Jobs stopped.")
 
 if __name__ == '__main__':
+    logging.info("starting %s", __file__)  
     signal.signal(signal.SIGINT, exitHandler)
     signal.signal(signal.SIGTERM, exitHandler)
     
     mpc = createMPDClient()
-    logging.info("mpd version: " + mpc.mpd_version)
-    logging.info("mpd outputs: " + str(mpc.outputs()))
-    logging.info("mpd stats: " + str(mpc.stats()))
+    logging.info("mpd version: %s", mpc.mpd_version)
+    logging.info("mpd outputs: %s", str(mpc.outputs()))
+    logging.info("mpd stats: %s", str(mpc.stats()))
     mpc.close()
     mpc.disconnect()
     mpc = None
     
     try:
         startJobs()
-        monitorRemote()
     except Exception as e:
         logging.error("Critical exception: %s", e)
         
     stopJobs()
 
-    print "Terminating musiccontroller."     
+    logging.info("terminated")      
     exit(0)

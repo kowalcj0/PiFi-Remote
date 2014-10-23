@@ -206,7 +206,7 @@ def stopJobs():
     mStop = None
     logging.info("Jobs stopped.")
 
-if __name__ == '__main__':
+def main():
     logging.info("starting %s", __file__)  
     signal.signal(signal.SIGINT, exitHandler)
     signal.signal(signal.SIGTERM, exitHandler)
@@ -229,4 +229,6 @@ if __name__ == '__main__':
 
     logging.info("terminated")      
     exit(0)
-    
+
+if __name__ == '__main__':
+    main()

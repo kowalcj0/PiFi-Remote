@@ -12,8 +12,8 @@
  
 # Daemon script to call
 DIR=/usr/share/adafruit/webide/repositories/pi.hifi/pifi
-DAEMON=$DIR/MusicController.py
-DAEMON_NAME=musiccontroller
+DAEMON=$DIR/PiFiRemote.py
+DAEMON_NAME=PiFi-Remote
  
 # This next line determines what user the script runs as.
 # Root generally not recommended but necessary if you are using the Raspberry Pi GPIO from Python.

@@ -70,7 +70,7 @@ def refreshRMS(changeEvent, stopEvent):
             if MpdTrack.getInfo() is not None:
                 n = computeRMS(fifo, 1024, 16)
                 LCDScreen.setLine2("="*n + " "*(16-n))
-                sleep(0.1)
+                sleep(0.01)
     logging.info("Job refreshRMS stopped")
 
 def refreshTrack(changeEvent, stopEvent):

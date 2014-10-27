@@ -107,11 +107,13 @@ def refreshTrack(changeEvent, stopEvent):
                 logging.info("Volume change: %s", status['volume'])
                 if status['state'] != 'stop':
                     LCDScreen.setLine2("Volume {0!s}%       ".format(status['volume']), 1)
+        except mpd.ConnectionError as e:
+            logging.error("Caught exception: %s (%s)", e , type(e))
+            mpc.connect("localhost", 6600)
         except Exception as e:
             logging.error("Caught exception: %s (%s)", e , type(e))
             mpc.disconnect() 
-            mpc = createMPDClient()
-            MpdTrack.init(mpc)
+            mpc.connect("localhost", 6600)
     mpc.close()
     mpc.disconnect() 
     logging.info("Job refreshTrack stopped")

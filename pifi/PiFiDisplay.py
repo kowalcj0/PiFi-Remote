@@ -21,8 +21,9 @@ logging.basicConfig(level=logging.INFO,
 def exitHandler(signal, frame):
     logging.info("Signaling internal jobs to stop...")
     try:
-        mStop.set()
+        os.system("mpc toogle")
         os.system("mpc stop")
+        mStop.set()
     except:
         logging.error("Unexpected error: %s", sys.exc_info()[0])
 

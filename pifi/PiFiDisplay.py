@@ -21,7 +21,6 @@ logging.basicConfig(level=logging.INFO,
 def exitHandler(signal, frame):
     logging.info("Signaling internal jobs to stop...")
     try:
-        os.system("mpc toggle")
         os.system("mpc stop")
         mStop.set()
     except:

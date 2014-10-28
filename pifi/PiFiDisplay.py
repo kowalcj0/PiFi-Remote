@@ -3,7 +3,6 @@ import os
 import signal
 import sys
 import threading
-import socket
 import logging
 from time import sleep
 
@@ -24,7 +23,6 @@ def exitHandler(signal, frame):
     try:
         mStop.set()
         os.system("mpc stop")
-        socket.shutdown(socket.SHUT_RDWR)
     except:
         logging.error("Unexpected error: %s", sys.exc_info()[0])
 

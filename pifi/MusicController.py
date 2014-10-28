@@ -232,6 +232,7 @@ def main():
         monitorRemote()
     except Exception as e:
         logging.error("Critical exception: %s", e)
+        exit(1)
         
     stopJobs()
 

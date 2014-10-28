@@ -184,7 +184,6 @@ def main():
         startJobs()
     except Exception as e:
         logging.error("Critical exception: %s", e)
-        exit(1)
         
     stopJobs()
     logging.info("terminated")      

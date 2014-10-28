@@ -55,7 +55,6 @@ def computeRMS(fifoFile, sampleSize, scale):
     return level
                         
 def refreshRMS(changeEvent, stopEvent):
-    import audioop
     MPD_FIFO = '/tmp/mpd.fifo'
     logging.info("Job refreshRMS started")
     try:

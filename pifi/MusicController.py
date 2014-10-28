@@ -6,6 +6,7 @@ import threading
 import logging
 from time import sleep
 
+import audioop
 from evdev import InputDevice, categorize, ecodes
 import mpd
 

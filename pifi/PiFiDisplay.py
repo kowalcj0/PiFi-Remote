@@ -39,7 +39,7 @@ def createMPDClient():
     return mpc
 
 def computeRMS(fifoFile, sampleSize, scale):
-    exponent = 8
+    exponent = 6
     level = 0
     try:
         rawSamples = fifoFile.read(sampleSize) 
@@ -47,8 +47,8 @@ def computeRMS(fifoFile, sampleSize, scale):
             rms = float(audioop.rms(rawSamples, 1))
             level1 = min(rms/256.0, 1.0)
             level2 = level1**exponent
-            level = int(level2*scale*10**(exponent-3))
-            #logging.info("Level= %f %f %f %f", rms, level1, level2, level)
+            level = int(level2*scale*10**(exponent-2))
+            logging.info("Level= %f %f %f %f", rms, level1, level2, level)
     except Exception as e:
         logging.error("%s", e)    
     return level
@@ -56,26 +56,33 @@ def computeRMS(fifoFile, sampleSize, scale):
 def refreshRMS(changeEvent, stopEvent):
     MPD_FIFO = '/tmp/mpd.fifo'
     logging.info("Job refreshRMS started")
-    with open(MPD_FIFO) as fifo:
-        while not stopEvent.is_set():
-            if MpdTrack.getInfo() is not None:
-                n = computeRMS(fifo, 2024, 16)
-                LCDScreen.setLine2("="*n + " "*(16-n))
-                sleep(0.01)
+    try:
+        with open(MPD_FIFO) as fifo:
+            while not stopEvent.is_set():
+                if MpdTrack.getInfo() is not None:
+                    n = computeRMS(fifo, 2024, 16)
+                    LCDScreen.setLine2("="*n + " "*(16-n))
+                    sleep(0.01)
+    except Exception as e:
+        logging.critical("Critical exception: %s (%s)", e , type(e))
     logging.info("Job refreshRMS stopped")
 
 def refreshRMS2(changeEvent, stopEvent):
     import SpectrumAnalyzer as sa
-    analyzer = sa.SpectrumAnalyzer(1024, 44100, 8, 5)
     logging.info("Job refreshRMS started")
-    with open(sa.MPD_FIFO) as fifo:
-        while not stopEvent.is_set():
-            if changeEvent.is_set():
-                analyzer.resetSmoothing()
-                changeEvent.clear()
-            if MusicTrack.getInfo() is not None:
-                n = analyzer.computeRMS(fifo, 16)
-                LCDScreen.setLine2("="*n + " "*(16-n))
+    try:
+        analyzer = sa.SpectrumAnalyzer(1024, 44100, 8, 5)
+        with open(sa.MPD_FIFO) as fifo:
+            while not stopEvent.is_set():
+                if changeEvent.is_set():
+                    analyzer.resetSmoothing()
+                    changeEvent.clear()
+                if MusicTrack.getInfo() is not None:
+                    n = analyzer.computeRMS(fifo, 16)
+                    LCDScreen.setLine2("="*n + " "*(16-n))
+                    sleep(0.01)
+    except Exception as e:
+        logging.critical("Critical exception: %s (%s)", e , type(e))
     logging.info("Job refreshRMS stopped")
 
 def refreshTrack(changeEvent, stopEvent):
@@ -105,10 +112,11 @@ def refreshTrack(changeEvent, stopEvent):
                 logging.info("Volume change: %s", status['volume'])
                 if status['state'] != 'stop':
                     LCDScreen.setLine2("Volume {0!s}%       ".format(status['volume']), 1)
+        except mpd.ConnectionError as e:
+            logging.error("Connection error: %s", e)
+            mpc.connect("localhost", 6600)
         except Exception as e:
-            logging.error("Caught exception: %s (%s)", e , type(e))
-            #mpc.close()
-            mpc.disconnect() 
+            logging.critical("Critical exception: %s (%s)", e , type(e))
             mpc = createMPDClient()
             MpdTrack.init(mpc)
     mpc.close()

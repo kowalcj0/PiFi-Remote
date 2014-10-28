@@ -23,6 +23,7 @@ def exitHandler(signal, frame):
     logging.info("Signaling internal jobs to stop...")
     try:
         os.system("mpc stop")
+        socket.shutdown(SHUT_RDWR)
         mStop.set()
     except:
         logging.error("Unexpected error: %s", sys.exc_info()[0])

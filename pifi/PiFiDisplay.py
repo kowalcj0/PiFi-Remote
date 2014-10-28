@@ -3,6 +3,7 @@ import os
 import signal
 import sys
 import threading
+import socket
 import logging
 from time import sleep
 
@@ -22,6 +23,7 @@ def exitHandler(signal, frame):
     logging.info("Signaling internal jobs to stop...")
     try:
         os.system("mpc stop")
+        socket.shutdown(SHUT_RD)
         mStop.set()
     except:
         logging.error("Unexpected error: %s", sys.exc_info()[0])

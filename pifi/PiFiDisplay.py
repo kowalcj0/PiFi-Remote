@@ -24,7 +24,7 @@ def exitHandler(signal, frame):
     try:
         mStop.set()
         os.system("mpc stop")
-        socket.shutdown(SHUT_RDWR)
+        socket.shutdown(socket.SHUT_RDWR)
     except:
         logging.error("Unexpected error: %s", sys.exc_info()[0])
 

@@ -12,7 +12,7 @@ import mpd
 
 from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 from LCDScreen import LCDScreen
-from MpdTrack import MpdTrack
+from MPD displaTrack import MpdTrack
             
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(module)s.%(funcName)s: %(message)s',
@@ -23,7 +23,6 @@ def exitHandler(signal, frame):
     logging.info("Signaling internal jobs to stop...")
     try:
         os.system("mpc stop")
-        socket.shutdown(SHUT_RD)
         mStop.set()
     except:
         logging.error("Unexpected error: %s", sys.exc_info()[0])

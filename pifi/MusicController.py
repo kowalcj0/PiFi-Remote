@@ -4,7 +4,6 @@ import signal
 import sys
 import threading
 import logging
-import audioop
 from time import sleep
 
 from evdev import InputDevice, categorize, ecodes
@@ -55,6 +54,7 @@ def computeRMS(fifoFile, sampleSize, scale):
     return level
                         
 def refreshRMS(changeEvent, stopEvent):
+    import audioop
     MPD_FIFO = '/tmp/mpd.fifo'
     logging.info("Job refreshRMS started")
     try:

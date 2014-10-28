@@ -12,7 +12,7 @@ import mpd
 
 from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 from LCDScreen import LCDScreen
-from MPD displaTrack import MpdTrack
+from MpdTrack import MpdTrack
             
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(module)s.%(funcName)s: %(message)s',

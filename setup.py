@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages  # Always prefer setuptools over distutils
 from setuptools.command.install import install
 from codecs import open  # To use a consistent encoding
-from os import path
+from os
 import pifi 
 
-here = path.abspath(path.dirname(__file__))
+here = os.path.abspath(os.path.dirname(__file__))
 
 class post_install(install):
     def run(self):
@@ -23,7 +23,7 @@ class post_install(install):
 # README file and 2) it's easier to type in the README file than to put a raw
 # string in below ...
 def read(fname):
-    return open(path.join(path.dirname(__file__), fname)).read()
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
     name='PiFi',

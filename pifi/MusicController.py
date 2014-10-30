@@ -103,7 +103,7 @@ def refreshTrack(changeEvent, stopEvent):
                         LCDScreen.switchOn()
                         LCDScreen.setLine1(track[0], 0)
                     if prevTrack is None or track[1] != prevTrack[1]:
-                        LCDScreen.setLine2(track[1]+" "*(16-len(track[1])), 1)
+                        LCDScreen.setLine2(track[1]+" "*(16-len(track[1])), 0.5)
                     prevTrack = track
                 else:
                     LCDScreen.switchOff()
@@ -112,7 +112,7 @@ def refreshTrack(changeEvent, stopEvent):
                 status = mpc.status()
                 logging.info("Volume change: %s", status['volume'])
                 if status['state'] != 'stop':
-                    LCDScreen.setLine2("Volume {0!s}%       ".format(status['volume']), 1)
+                    LCDScreen.setLine2("Volume {0!s}%       ".format(status['volume']), 0.5)
         except mpd.ConnectionError as e:
             logging.error("Connection error: %s", e)
             mpc.connect("localhost", 6600)

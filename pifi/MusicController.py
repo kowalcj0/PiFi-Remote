@@ -63,7 +63,7 @@ def refreshRMS(changeEvent, stopEvent):
                 if MpdTrack.getInfo() is not None:
                     n = computeRMS(fifo, 2024, 16)
                     LCDScreen.setLine2("="*n + " "*(16-n))
-                    sleep(0.02)
+                    sleep(0.01)
     except Exception as e:
         logging.critical("Critical exception: %s (%s)", e , type(e))
     logging.info("Job refreshRMS stopped")
@@ -81,7 +81,7 @@ def refreshRMS2(changeEvent, stopEvent):
                 if MusicTrack.getInfo() is not None:
                     n = analyzer.computeRMS(fifo, 16)
                     LCDScreen.setLine2("="*n + " "*(16-n))
-                    sleep(0.02)
+                    sleep(0.01)
     except Exception as e:
         logging.critical("Critical exception: %s (%s)", e , type(e))
     logging.info("Job refreshRMS stopped")

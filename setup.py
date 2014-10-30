@@ -109,6 +109,7 @@ setup(
     data_files=[
         ('/etc/init.d', ['bin/pifidisplay']),
         ('/etc/init.d', ['bin/pifiremote']),
+        ('/etc/init.d', ['bin/shairport']),
         ('/etc', ['bin/fifo-mpd.conf'])
     ],
         

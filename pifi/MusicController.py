@@ -103,7 +103,7 @@ def refreshTrack(changeEvent, stopEvent):
                         LCDScreen.switchOn()
                         LCDScreen.setLine1(track[0], 0)
                     if prevTrack is None or track[1] != prevTrack[1]:
-                        LCDScreen.setLine2(track[1]+" "*(16-len(track[1])), 0.5)
+                        LCDScreen.setLine2(track[1]+" "*(16-len(track[1])), 1)
                     prevTrack = track
                 else:
                     LCDScreen.switchOff()

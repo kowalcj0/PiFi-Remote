@@ -113,5 +113,6 @@ setup(
         ('/etc', ['bin/fifo-mpd.conf'])
     ],
     
+    cmdclass = {'install': post_install},
 )
 

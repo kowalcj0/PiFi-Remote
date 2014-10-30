@@ -39,7 +39,7 @@ def monitorRemote():
     for event in dev.read_loop():
         #logging.debug(str(categorize(event)))
         if event.type != ecodes.EV_KEY or event.value != 1:
-            sleep(0.1)
+            sleep(0.05)
             continue
         try:
             mpc = createMPDClient()
@@ -71,8 +71,8 @@ def monitorRemote():
             logging.error("Caught exception: %s (%s)", e , type(e)) 
     logging.info("Job monitorRemote stopped")
 
-if __name__ == '__main__':
-    logging.info("starting %s", __file__)   
+def main():
+        logging.info("starting %s", __file__)   
     signal.signal(signal.SIGINT, exitHandler)
     signal.signal(signal.SIGTERM, exitHandler) 
     
@@ -92,3 +92,5 @@ if __name__ == '__main__':
     logging.info("terminated")     
     exit(0)
     
+if __name__ == '__main__':
+    main()

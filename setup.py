@@ -1,15 +1,15 @@
 from setuptools import setup, find_packages  # Always prefer setuptools over distutils
-from setuptools.command.install_scripts import install_scripts
+from setuptools.command.install_data import install_data
 from codecs import open  # To use a consistent encoding
 from os import path
 import pifi 
 
 here = path.abspath(path.dirname(__file__))
 
-class my_install_scripts(install_scripts):
+class my_install_data(install_data):
     def run(self):
-        install_scripts.run(self)
-        print("Doing something in install")
+        install_data.run(self)
+        print("****** Doing something in my_install_data")
 
 
 # Utility function to read the README file.
@@ -113,6 +113,6 @@ setup(
         ('/etc', ['bin/fifo-mpd.conf'])
     ],
         
-    cmdclass = {'install_scripts': my_install_scripts}
+    cmdclass = {'install_data': my_install_data}
 )
 

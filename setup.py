@@ -1,9 +1,16 @@
 from setuptools import setup, find_packages  # Always prefer setuptools over distutils
+from setuptools.command.install_scripts import install_scripts
 from codecs import open  # To use a consistent encoding
 from os import path
 import pifi 
 
 here = path.abspath(path.dirname(__file__))
+
+class my_install_scripts(install_scripts):
+    def run(self):
+        install_scripts.run(self)
+        print("Doing something in install")
+
 
 # Utility function to read the README file.
 # Used for the long_description.  It's nice, because now 1) we have a top level
@@ -97,5 +104,8 @@ setup(
             'pifi-remote = pifi.PiFiRemote:main',
         ],
     },
+    
+    scripts=[os.path.join('bin', 'myscript')],
+    cmdclass = {'install_scripts': my_install_scripts}
 )
 

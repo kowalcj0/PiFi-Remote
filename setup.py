@@ -105,7 +105,7 @@ setup(
         ],
     },
     
-    scripts=[os.path.join('bin', 'pifidisplay')],
+    scripts=[path.join('bin', 'pifidisplay')],
     
     cmdclass = {'install_scripts': my_install_scripts}
 )

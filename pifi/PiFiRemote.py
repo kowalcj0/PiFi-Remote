@@ -72,7 +72,7 @@ def monitorRemote():
     logging.info("Job monitorRemote stopped")
 
 def main():
-        logging.info("starting %s", __file__)   
+    logging.info("starting %s", __file__)   
     signal.signal(signal.SIGINT, exitHandler)
     signal.signal(signal.SIGTERM, exitHandler) 
     

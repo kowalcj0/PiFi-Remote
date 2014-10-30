@@ -12,8 +12,8 @@ class post_install(install):
         print("****** Doing something in post_install")
         os.system("sudo cat /etc/fifo-mpd.conf /etc/mpd.conf") 
         os.system("sudo service mpd restart") 
-        os.system("sudo update-rc.d pifidisplay defaults"
-        os.system("sudo service pifidisplay restart") ) 
+        os.system("sudo update-rc.d pifidisplay defaults")
+        os.system("sudo service pifidisplay restart")
         os.system("sudo update-rc.d pifiremote defaults")
         os.system("sudo service pifiremote restart") 
 

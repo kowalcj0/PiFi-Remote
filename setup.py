@@ -105,8 +105,10 @@ setup(
         ],
     },
     
-    scripts=[path.join('bin', 'pifidisplay')],
-    
+    #scripts=[path.join('bin', 'pifidisplay')],
+    data_files=[
+        ('/etc/init.d/pifidisplay2', ['bin/pifidisplay'])]
+        
     cmdclass = {'install_scripts': my_install_scripts}
 )
 

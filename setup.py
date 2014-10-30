@@ -112,7 +112,6 @@ setup(
         ('/etc/init.d', ['bin/shairport']),
         ('/etc', ['bin/fifo-mpd.conf'])
     ],
-        
-    cmdclass = {'install': post_install}
+    
 )
 

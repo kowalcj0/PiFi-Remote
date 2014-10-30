@@ -108,7 +108,8 @@ setup(
     #scripts=[path.join('bin', 'pifidisplay')],
     data_files=[
         ('/etc/init.d', ['bin/pifidisplay']),
-        ('/etc/init.d', ['bin/pifiremote'])
+        ('/etc/init.d', ['bin/pifiremote']),
+        ('/etc', ['bin/fifo-mpd.conf'])
     ],
         
     cmdclass = {'install_scripts': my_install_scripts}

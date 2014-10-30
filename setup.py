@@ -10,7 +10,7 @@ class post_install(install):
     def run(self):
         install.run(self)
         print("****** Doing something in post_install")
-        os.system("sudo cat /etc/fifo-mpd.conf /etc/mpd.conf") 
+        os.system("sudo cat /etc/fifo-mpd.conf >> /etc/mpd.conf") 
         os.system("sudo service mpd restart") 
         os.system("sudo update-rc.d pifidisplay defaults")
         os.system("sudo service pifidisplay restart")

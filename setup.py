@@ -113,10 +113,10 @@ setup(
     
     #scripts=[path.join('bin', 'pifidisplay')],
     data_files=[
-        ('/etc/init.d', ['bin/pifidisplay']),
-        ('/etc/init.d', ['bin/pifiremote']),
-        ('/etc/init.d', ['bin/shairport']),
-        ('/etc', ['bin/fifo-mpd.conf'])
+        ('/etc/init.d', ['etc/init.d/pifidisplay']),
+        ('/etc/init.d', ['etc/init.d/pifiremote']),
+        ('/etc/init.d', ['etc/init.d/shairport']),
+        ('/etc', ['etc/fifo-mpd.conf'])
     ],
     
     cmdclass = {'install': post_install},

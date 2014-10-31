@@ -25,8 +25,6 @@ class LCD16x2(object):
         cls.mLock = threading.Lock()
         cls.mThread = threading.Thread(target=cls.display)
         cls.mThread.start()
-        cls.switchOn()
-        cls.mLcd.message("Welcome to PiFi\nyour music hub!") 
         
     @classmethod
     def switchOn(cls):

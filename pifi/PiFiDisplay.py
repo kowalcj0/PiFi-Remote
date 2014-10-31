@@ -85,23 +85,24 @@ def refreshRMS2(changeEvent, stopEvent):
         logging.critical("Critical exception: %s (%s)", e , type(e))
     logging.info("Job refreshRMS stopped")
 
-def monitorShaiportMetadata(stopEvent):
+def monitorShairportMetadata(changeEvent, stopEvent):
     SHAIRPORT_FIFO = '/tmp/shaiport/now_playing'
-    logging.info("Job monitorShaiportMetadata started")
+    logging.info("Job monitorShairportMetadata started")
     try:
         with open(SHAIRPORT_FIFO) as fifo:
-            while not stopEvent.is_set():
+            while not stopEvent.is_set() and not changeEvent.is_set():
                 line = fifo.read()
                 if line:
                     LCD16x2.setLine1(line)
     except Exception as e:
         logging.critical("Critical exception: %s (%s)", e , type(e))
-    logging.info("Job monitorShaiportMetadata stopped")
+    logging.info("Job monitorShairportMetadata stopped")
 
 def refreshTrack(changeEvent, stopEvent):
     mpc = createMPDClient()
     MpdTrack.init(mpc)
     prevTrack = None
+    threadShairport = None
     logging.info("Job refreshTrack started")
     while not stopEvent.is_set():
         try:
@@ -111,8 +112,11 @@ def refreshTrack(changeEvent, stopEvent):
                 logging.info("Track: %s", track)
                 if track is not None:
                     if prevTrack is None or track[0] != prevTrack[0]:
-                        os.system("killall -SIGUSR2 shairport")
                         changeEvent.set()
+                        os.system("killall -SIGUSR2 shairport")
+                        if threadShairport is not None:
+                            threadShairport.join()
+                            threadShairport = None
                         LCD16x2.switchOn()
                         LCD16x2.setLine1(track[0], 0)
                     if prevTrack is None or track[1] != prevTrack[1]:
@@ -121,6 +125,7 @@ def refreshTrack(changeEvent, stopEvent):
                 else:
                     LCD16x2.switchOff()
                     prevTrack = None
+                    threadShairport = threading.Thread(target=monitorShairportMetadata, args=(changeEvent, mStop))
             elif subsystem == 'mixer':
                 status = mpc.status()
                 logging.info("Volume change: %s", status['volume'])

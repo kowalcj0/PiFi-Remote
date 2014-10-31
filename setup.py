@@ -9,7 +9,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 class post_install(install):
     def run(self):
         install.run(self)
-        print("****** Doing something in post_install")
+        print("*** Executing post install actions:")
         os.system("sudo cat /etc/fifo-mpd.conf >> /etc/mpd.conf") 
         os.system("sudo service mpd restart") 
         os.system("sudo update-rc.d pifidisplay defaults")

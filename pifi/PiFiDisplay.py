@@ -10,7 +10,7 @@ import audioop
 import mpd
 
 from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
-from LCDScreen import LCDScreen
+from LCD16x2 import LCD16x2
 from MpdTrack import MpdTrack
             
 logging.basicConfig(level=logging.INFO,
@@ -99,10 +99,10 @@ def refreshTrack(changeEvent, stopEvent):
                 if track is not None:
                     if prevTrack is None or track[0] != prevTrack[0]:
                         changeEvent.set()
-                        LCDScreen.switchOn()
-                        LCDScreen.setLine1(track[0], 0)
+                        LCD16x2.switchOn()
+                        LCD16x2.setLine1(track[0], 0)
                     if prevTrack is None or track[1] != prevTrack[1]:
-                        LCDScreen.setLine2(track[1]+" "*(16-len(track[1])), 1)
+                        LCD16x2.setLine2(track[1]+" "*(16-len(track[1])), 1)
                     prevTrack = track
                 else:
                     LCDScreen.switchOff()
@@ -111,7 +111,7 @@ def refreshTrack(changeEvent, stopEvent):
                 status = mpc.status()
                 logging.info("Volume change: %s", status['volume'])
                 if status['state'] != 'stop':
-                    LCDScreen.setLine2("Volume {0!s}%       ".format(status['volume']), 0.5)
+                    LCD16x2.setLine2("Volume {0!s}%       ".format(status['volume']), 0.5)
         except mpd.ConnectionError as e:
             logging.error("Connection error: %s", e)
             mpc.connect("localhost", 6600)
@@ -132,10 +132,7 @@ def startJobs():
     mStop = threading.Event()
     mChangeEvent = threading.Event()
     
-    # Use busnum = 0 for raspi version 1 (256MB) and busnum = 1 for version 2
-    lcd = Adafruit_CharLCDPlate(busnum = 1)
-    
-    LCDScreen.init(lcd, mStop)
+    LCD16x2.init(lcd, mStop)
     
     logging.info("RMS display job starting...")
     mThreadRMS = threading.Thread(target=refreshRMS, args=(mChangeEvent, mStop))

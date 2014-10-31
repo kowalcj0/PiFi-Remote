@@ -95,7 +95,7 @@ def monitorShairportMetadata(changeEvent, stopEvent):
                 if line:
                     logging.info("line=%s", line)
                     LCD16x2.setLine1(line)
-                    sleep(0.2)
+                    sleep(0.1)
     except Exception as e:
         logging.critical("Critical exception: %s (%s)", e , type(e))
     logging.info("Job monitorShairportMetadata stopped")

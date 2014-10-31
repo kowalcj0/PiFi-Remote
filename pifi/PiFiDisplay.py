@@ -85,6 +85,19 @@ def refreshRMS2(changeEvent, stopEvent):
         logging.critical("Critical exception: %s (%s)", e , type(e))
     logging.info("Job refreshRMS stopped")
 
+def monitorShaiportMetadata(stopEvent):
+    SHAIRPORT_FIFO = '/tmp/shaiport/now_playing'
+    logging.info("Job monitorShaiportMetadata started")
+    try:
+        with open(SHAIRPORT_FIFO) as fifo:
+            while not stopEvent.is_set():
+                line = fifo.read()
+                if line:
+                    LCD16x2.setLine1(line)
+    except Exception as e:
+        logging.critical("Critical exception: %s (%s)", e , type(e))
+    logging.info("Job monitorShaiportMetadata stopped")
+
 def refreshTrack(changeEvent, stopEvent):
     mpc = createMPDClient()
     MpdTrack.init(mpc)

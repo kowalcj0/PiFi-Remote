@@ -5,7 +5,7 @@ from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 from WaitForMultipleEvents import WaitForMultipleEvents
 
 
-class LCDScreen(object):
+class LCD16x2(object):
     mLcd = None
     mStop = None
     mLock = None

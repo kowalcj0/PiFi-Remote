@@ -61,7 +61,7 @@ def refreshRMS(changeEvent, stopEvent):
             while not stopEvent.is_set():
                 if MpdTrack.getInfo() is not None:
                     n = computeRMS(fifo, 2024, 16)
-                    LCDScreen.setLine2("="*n + " "*(16-n))
+                    LCD16x2.setLine2("="*n + " "*(16-n))
                     sleep(0.01)
     except Exception as e:
         logging.critical("Critical exception: %s (%s)", e , type(e))
@@ -79,7 +79,7 @@ def refreshRMS2(changeEvent, stopEvent):
                     changeEvent.clear()
                 if MusicTrack.getInfo() is not None:
                     n = analyzer.computeRMS(fifo, 16)
-                    LCDScreen.setLine2("="*n + " "*(16-n))
+                    LCD16x2.setLine2("="*n + " "*(16-n))
                     sleep(0.01)
     except Exception as e:
         logging.critical("Critical exception: %s (%s)", e , type(e))
@@ -105,7 +105,7 @@ def refreshTrack(changeEvent, stopEvent):
                         LCD16x2.setLine2(track[1]+" "*(16-len(track[1])), 1)
                     prevTrack = track
                 else:
-                    LCDScreen.switchOff()
+                    LCD16x2.switchOff()
                     prevTrack = None
             elif subsystem == 'mixer':
                 status = mpc.status()
@@ -132,6 +132,8 @@ def startJobs():
     mStop = threading.Event()
     mChangeEvent = threading.Event()
     
+    # Use busnum = 0 for raspi version 1 (256MB) and busnum = 1 for version 2
+    lcd = Adafruit_CharLCDPlate(busnum = 1) 
     LCD16x2.init(lcd, mStop)
     
     logging.info("RMS display job starting...")
@@ -139,7 +141,7 @@ def startJobs():
     mThreadRMS.start()
     
     sleep(1)
-    LCDScreen.switchOff()
+    LCD16x2.switchOff()
     
     logging.info("Track display job starting...")
     refreshTrack(mChangeEvent, mStop)
@@ -158,7 +160,7 @@ def stopJobs():
         mThreadRMS.join(3)
     mThreadRMS = None
     
-    LCDScreen.switchOff()
+    LCD16x2.switchOff()
     
     mChangeEvent = None
     mStop = None

@@ -10,7 +10,7 @@ import audioop
 import mpd
 
 from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
-from LCD16x2 import LCD16x2
+from PiScreens import LCD16x2
 from MpdTrack import MpdTrack
             
 logging.basicConfig(level=logging.INFO,

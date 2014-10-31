@@ -86,7 +86,7 @@ def refreshRMS2(changeEvent, stopEvent):
     logging.info("Job refreshRMS stopped")
 
 def monitorShairportMetadata(changeEvent, stopEvent):
-    SHAIRPORT_FIFO = '/tmp/shaiport/now_playing'
+    SHAIRPORT_FIFO = '/tmp/shairport/now_playing'
     logging.info("Job monitorShairportMetadata started")
     try:
         with open(SHAIRPORT_FIFO) as fifo:

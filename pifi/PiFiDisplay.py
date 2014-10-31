@@ -93,7 +93,7 @@ def monitorShairportMetadata(changeEvent, stopEvent):
             while not stopEvent.is_set() and not changeEvent.is_set():
                 line = fifo.read()
                 if line:
-                    LCD16x2.setLine1(line)
+                    LCD16x2.setLine1(line, 0.1)
     except Exception as e:
         logging.critical("Critical exception: %s (%s)", e , type(e))
     logging.info("Job monitorShairportMetadata stopped")

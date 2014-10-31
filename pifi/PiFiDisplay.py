@@ -128,7 +128,7 @@ def refreshTrack(changeEvent, stopEvent):
                 else:
                     LCD16x2.switchOff()
                     prevTrack = None
-                    changeEvent.reset()
+                    changeEvent.clear()
                     threadShairport = threading.Thread(target=monitorShairportMetadata, args=(changeEvent, stopEvent))
                     threadShairport.start()
             elif subsystem == 'mixer':

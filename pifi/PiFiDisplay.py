@@ -93,6 +93,7 @@ def monitorShairportMetadata(changeEvent, stopEvent):
             while not stopEvent.is_set() and not changeEvent.is_set():
                 line = fifo.read()
                 if line:
+                    logging.info("line=%s", line)
                     LCD16x2.setLine1(line)
                     sleep(0.2)
     except Exception as e:

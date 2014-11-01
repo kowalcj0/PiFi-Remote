@@ -52,6 +52,10 @@ class LCD16x2(object):
     @classmethod
     def setText(cls, id, text, delay = 0):
         with cls.mLock:
+            if len(text) > 16:
+                text = text[0:15]
+            else
+                text += " "*(16-len(text))
             if id == 1 and cls.mD1 == 0:
                 cls.mStr1 = text
                 cls.mD1 = delay
@@ -65,13 +69,13 @@ class LCD16x2(object):
     def getText(cls, id):
         with cls.mLock:
             if id == 1:
-                line = cls.mStr1[0:15]
+                line = cls.mStr1
                 delay = cls.mD1
                 cls.mStr1 = ''
                 cls.mD1 = 0
                 cls.mController.clear(cls.mUpdate1)
             elif id == 2:
-                line = cls.mStr2[0:15]
+                line = cls.mStr2
                 delay = cls.mD2
                 cls.mStr2 = ''
                 cls.mD2 = 0

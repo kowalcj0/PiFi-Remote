@@ -5,17 +5,6 @@ from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 from WaitForMultipleEvents import WaitForMultipleEvents
 
 """
-Pi screen interface 
-"""
-class PiScreen(object):
-    def switchOn(self):
-        pass
-    def switchOff(self):
-        pass    
-    def setText(self, id, text, delay = 0):
-        pass
-
-"""
 Pi screen LCD 16x2 
 """
 class LCD16x2(object):

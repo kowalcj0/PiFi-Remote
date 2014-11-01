@@ -10,11 +10,16 @@ class post_install(install):
     def run(self):
         install.run(self)
         print("*** Executing post install actions:")
+        # update mpd configuration if necessary
         if '/tmp/mpd.fifo' in open('/etc/mpd.conf').read():
             os.system("sudo cat /etc/fifo-mpd.conf >> /etc/mpd.conf") 
             os.system("sudo service mpd restart") 
+        # music display daemon
+        os.system("sudo chmod +x /etc/init.d/pifidisplay")
         os.system("sudo update-rc.d pifidisplay defaults")
         os.system("sudo service pifidisplay restart")
+        # remote control daemon
+        os.system("sudo chmod +x /etc/init.d/pifiremote")
         os.system("sudo update-rc.d pifiremote defaults")
         os.system("sudo service pifiremote restart") 
 

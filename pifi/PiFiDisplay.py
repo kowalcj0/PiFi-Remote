@@ -61,7 +61,7 @@ def refreshRMS(changeEvent, stopEvent):
             while not stopEvent.is_set():
                 if MpdTrack.getInfo() is not None:
                     n = computeRMS(fifo, 2024, 16)
-                    LCD16x2.setLine2("="*n + " "*(16-n))
+                    LCD16x2.setText(2, "="*n)
                     sleep(0.01)
     except Exception as e:
         logging.critical("Critical exception: %s (%s)", e , type(e))
@@ -79,7 +79,7 @@ def refreshRMS2(changeEvent, stopEvent):
                     changeEvent.clear()
                 if MusicTrack.getInfo() is not None:
                     n = analyzer.computeRMS(fifo, 16)
-                    LCD16x2.setLine2("="*n + " "*(16-n))
+                    LCD16x2.setText(2, "="*n)
                     sleep(0.01)
     except Exception as e:
         logging.critical("Critical exception: %s (%s)", e , type(e))
@@ -95,8 +95,8 @@ def monitorShairportMetadata(changeEvent, stopEvent):
                 logging.info("line=%s", line)
                 if line:
                     LCD16x2.switchOn()
-                    LCD16x2.setLine1(line)
-                    sleep(0.1)
+                    LCD16x2.setText(1, line)
+                    sleep(0.5)
     except Exception as e:
         logging.critical("Critical exception: %s (%s)", e , type(e))
     logging.info("Job monitorShairportMetadata stopped")
@@ -121,9 +121,9 @@ def refreshTrack(changeEvent, stopEvent):
                             threadShairport.join()
                             threadShairport = None
                         LCD16x2.switchOn()
-                        LCD16x2.setLine1(track[0], 0)
+                        LCD16x2.setText(1, track[0], 0)
                     if prevTrack is None or track[1] != prevTrack[1]:
-                        LCD16x2.setLine2(track[1]+" "*(16-len(track[1])), 1)
+                        LCD16x2.setText(2, track[1], 1)
                     prevTrack = track
                 else:
                     LCD16x2.switchOff()
@@ -135,7 +135,7 @@ def refreshTrack(changeEvent, stopEvent):
                 status = mpc.status()
                 logging.info("Volume change: %s", status['volume'])
                 if status['state'] != 'stop':
-                    LCD16x2.setLine2("Volume {0!s}%       ".format(status['volume']), 0.8)
+                    LCD16x2.setText(2, "Volume {0!s}%".format(status['volume']), 0.8)
         except mpd.ConnectionError as e:
             logging.error("Connection error: %s", e)
             mpc.connect("localhost", 6600)
@@ -160,7 +160,7 @@ def startJobs():
     lcd = Adafruit_CharLCDPlate(busnum = 1) 
     LCD16x2.init(lcd, mStop)
     LCD16x2.switchOn()
-    LCD16x2.setLine1("Welcome to PiFi\nyour music hub!") 
+    LCD16x2.setText(1, "Welcome to PiFi\nyour music hub!") 
     
     logging.info("RMS display job starting...")
     mThreadRMS = threading.Thread(target=refreshRMS, args=(mChangeEvent, mStop))

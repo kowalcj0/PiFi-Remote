@@ -11,7 +11,7 @@ class post_install(install):
         install.run(self)
         print("*** Executing post install actions:")
         # update mpd configuration if necessary
-        if '/tmp/mpd.fifo' in open('/etc/mpd.conf').read():
+        if '/tmp/mpd.fifo' not in open('/etc/mpd.conf').read():
             os.system("sudo cat /etc/fifo-mpd.conf >> /etc/mpd.conf") 
             os.system("sudo service mpd restart") 
         # update music display init script

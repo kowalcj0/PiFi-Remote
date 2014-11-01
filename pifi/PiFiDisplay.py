@@ -22,7 +22,7 @@ def exitHandler(signal, frame):
     logging.info("Signaling internal jobs to stop...")
     try:
         mStop.set()
-        os.system("mpc stop")
+        os.system("mpc volume +0")
     except:
         logging.error("Unexpected error: %s", sys.exc_info()[0])
 

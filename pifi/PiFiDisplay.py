@@ -22,6 +22,7 @@ def exitHandler(signal, frame):
     logging.info("Signaling internal jobs to stop...")
     try:
         mStop.set()
+        # unblock mpc's idle state
         os.system("mpc volume -1")
     except:
         logging.error("Unexpected error: %s", sys.exc_info()[0])

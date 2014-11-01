@@ -23,6 +23,7 @@ def exitHandler(signal, frame):
     try:
         mStop.set()
         # unblock mpc's idle state with volume change
+        os.system("mpc stop")
         os.system("mpc volume -1")
         os.system("mpc volume +1")
     except:

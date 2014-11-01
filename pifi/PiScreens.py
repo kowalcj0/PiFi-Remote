@@ -57,7 +57,7 @@ class LCD16x2(object):
         with cls.mLock:
             if len(text) > 16:
                 text = text[0:15]
-            else
+            else:
                 text += " "*(16-len(text))
             if id == 1 and cls.mD1 == 0:
                 cls.mStr1 = text

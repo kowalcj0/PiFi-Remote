@@ -170,7 +170,6 @@ def startJobs():
     sleep(1)
     LCD16x2.switchOff()
     
-    logging.info("Track display job starting...")
     refreshTrack(mChangeEvent, mStop)
 
 def stopJobs():
@@ -178,11 +177,12 @@ def stopJobs():
     global mStop
     global mThreadTrack
     global mThreadRMS
-    
+
+    logging.info("Wait for stopping jobs...")
+
     # Redundant with signal handler
     mStop.set()
-    
-    logging.info("RMS display job stopping...")
+
     if mThreadRMS is not None:
         mThreadRMS.join(3)
     mThreadRMS = None

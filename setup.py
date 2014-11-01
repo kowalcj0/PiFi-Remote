@@ -14,11 +14,11 @@ class post_install(install):
         if '/tmp/mpd.fifo' in open('/etc/mpd.conf').read():
             os.system("sudo cat /etc/fifo-mpd.conf >> /etc/mpd.conf") 
             os.system("sudo service mpd restart") 
-        # music display daemon
+        # update music display init script
         os.system("sudo chmod +x /etc/init.d/pifidisplay")
         os.system("sudo update-rc.d pifidisplay defaults")
         os.system("sudo service pifidisplay restart")
-        # remote control daemon
+        # update remote control init script
         os.system("sudo chmod +x /etc/init.d/pifiremote")
         os.system("sudo update-rc.d pifiremote defaults")
         os.system("sudo service pifiremote restart") 

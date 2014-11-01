@@ -25,7 +25,7 @@ def exitHandler(signal, frame):
         # unblock mpc's idle state
         os.system("mpc volume -1")
     except:
-        logging.error("Unexpected error: %s", sys.exc_info()[0])
+        logging.critical("Unexpected error: %s", sys.exc_info()[0])
 
 def createMPDClient():
     mpc = mpd.MPDClient()           
@@ -209,7 +209,7 @@ def main():
     try:
         startJobs()
     except Exception as e:
-        logging.error("Critical exception: %s", e)
+        logging.critical("Critical exception: %s", e)
         
     stopJobs()
     logging.info("terminated")      

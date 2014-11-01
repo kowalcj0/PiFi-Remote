@@ -15,6 +15,9 @@ class PiScreen(object):
     def setText(self, id, text, delay = 0):
         pass
 
+"""
+Pi screen LCD 16x2 
+"""
 class LCD16x2(object):
     mLcd = None
     mStop = None

@@ -1,29 +1,18 @@
-# README #
+# PiFi Add-on #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+Version: 1.1.0
 
-### What is this repository for? ###
+PiFi is a set of python scripts running as daemons to improve the experience of mpd on Raspberry Pi.
+It has been tested with Volumio 1.4 and it adds:
 
-* Quick summary
-* 1.1.0
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+* Support for IR remote control.
+  You can use a small IR remote control (e.g. apple) along with a Flirc USB module acting as a keyboard with the raspberry pi.
 
-### How do I get set up? ###
+* Support for LCD display (16x2 from Adafruit).
+  It displays track and volume information on the screen.
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+Find more on: https://bitbucket.org/bertrandboichon/
 
-### Contribution guidelines ###
+Repo owner or admin: Bertrand Boichon
 
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+Copyright (C) 2014 - Bertrand Boichon (b.boichon@gmail.com)

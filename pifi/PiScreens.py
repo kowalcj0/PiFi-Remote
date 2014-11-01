@@ -50,50 +50,33 @@ class LCD16x2(object):
             cls.mLcd.backlight(cls.mLcd.OFF)
     
     @classmethod
-    def setLines(cls, string1, delay1, string2, delay2):
+    def setText(cls, id, text, delay = 0):
         with cls.mLock:
-            cls.mStr1 = string1
-            cls.mD1 = delay1
-            cls.mStr2 = string2
-            cls.mD2 = delay2
-            cls.mUpdate1.set()
-            cls.mController.set(cls.mUpdate2)
-        
-    @classmethod
-    def setLine1(cls, string, delay = 0):
-        with cls.mLock:
-            if cls.mD1 == 0:
-                cls.mStr1 = string
+            if id == 1 and cls.mD1 == 0:
+                cls.mStr1 = text
                 cls.mD1 = delay
                 cls.mController.set(cls.mUpdate1)
-    
-    @classmethod
-    def getLine1(cls):
-        with cls.mLock:
-            line1 = cls.mStr1[0:15]
-            cls.mStr1 = ''
-            d1 = cls.mD1
-            cls.mD1 = 0
-            cls.mController.clear(cls.mUpdate1)
-        return (line1, d1)
-        
-    @classmethod
-    def setLine2(cls, string, delay = 0):
-        with cls.mLock:
-            if cls.mD2 == 0:
-                cls.mStr2 = string
+            elif id == 2 and cls.mD2 == 0:
+                cls.mStr2 = text
                 cls.mD2 = delay
                 cls.mController.set(cls.mUpdate2)
     
     @classmethod
-    def getLine2(cls):
+    def getText(cls, id):
         with cls.mLock:
-            line2 = cls.mStr2[0:15]
-            cls.mStr2 = ''
-            d2 = cls.mD2
-            cls.mD2 = 0
-            cls.mController.clear(cls.mUpdate2)
-        return (line2, d2)
+            if id == 1:
+                line = cls.mStr1[0:15]
+                delay = cls.mD1
+                cls.mStr1 = ''
+                cls.mD1 = 0
+                cls.mController.clear(cls.mUpdate1)
+            elif id == 2:
+                line = cls.mStr2[0:15]
+                delay = cls.mD2
+                cls.mStr2 = ''
+                cls.mD2 = 0
+                cls.mController.clear(cls.mUpdate2)
+        return (line, delay)
     
     @classmethod
     def timerEnds(cls, disableEvent, timers, index):
@@ -111,8 +94,8 @@ class LCD16x2(object):
             line2 = ''
             triggeredEvents = cls.mController.waitAny()
             if cls.mUpdate1.is_set():
-                (line1, d1) = cls.getLine1()      
-                logging.debug("New line1: %s", line1)
+                (line1, d1) = cls.getText(1)      
+                #logging.debug("New line1: %s", line1)
                 if d1 > 0 and len(line1) > 0:
                     if timers[0] is not None:
                         timers[0].cancel()
@@ -124,9 +107,9 @@ class LCD16x2(object):
                     timers[1] = None
                     freeze2.clear()
             if not freeze2.is_set() and cls.mUpdate2.is_set():
-                (line2, d2) = cls.getLine2()  
+                (line2, d2) = cls.getText(2)  
                 if d2 > 0 and len(line2) > 0:
-                    logging.debug("New line2: %s - %d", line2, cls.mD2)
+                    #logging.debug("New line2: %s - %d", line2, cls.mD2)
                     if timers[1] is not None:
                         timers[1].cancel()
                     freeze2.set()

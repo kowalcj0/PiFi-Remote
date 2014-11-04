@@ -78,7 +78,7 @@ def refreshRmsNumpy(changeEvent, stopEvent):
                 if changeEvent.is_set():
                     analyzer.resetSmoothing()
                     changeEvent.clear()
-                if MusicTrack.getInfo() is not None:
+                if MpdTrack.getInfo() is not None:
                     n = analyzer.computeRMS(fifo, 16)
                     LCD16x2.setText(2, "="*n)
                     sleep(0.01)

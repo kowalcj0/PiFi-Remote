@@ -91,7 +91,7 @@ def monitorShairportMetadata(changeEvent, stopEvent):
     logging.info("Job monitorShairportMetadata started")
     try:
         with open(SHAIRPORT_FIFO) as fifo:
-            while not stopEvent.is_set() and not changeEvent.is_set():
+            while not stopEvent.is_set():
                 line = fifo.read()
                 logging.info("line=%s", line)
                 if line:
@@ -116,7 +116,6 @@ def refreshTrack(changeEvent, stopEvent):
                 logging.info("Track: %s", track)
                 if track is not None:
                     if prevTrack is None or track[0] != prevTrack[0]:
-                        changeEvent.set()
                         os.system("killall -SIGUSR2 shairport")
                         LCD16x2.switchOn()
                         LCD16x2.setText(1, track[0], 0)
@@ -126,7 +125,6 @@ def refreshTrack(changeEvent, stopEvent):
                 else:
                     LCD16x2.switchOff()
                     prevTrack = None
-                    changeEvent.clear()
             elif subsystem == 'mixer':
                 status = mpc.status()
                 logging.info("Volume change: %s", status['volume'])
@@ -162,6 +160,10 @@ def startJobs():
     logging.info("RMS display job starting...")
     mThreadRMS = threading.Thread(target=refreshRmsNumpy, args=(mChangeEvent, mStop))
     mThreadRMS.start()
+    
+    logging.info("Shairport metadata job starting...")
+    threadShairport = threading.Thread(target=monitorShairportMetadata, args=(changeEvent, stopEvent))
+    threadShairport.start()
     
     sleep(1)
     LCD16x2.switchOff()

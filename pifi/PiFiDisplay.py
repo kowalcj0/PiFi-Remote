@@ -96,6 +96,7 @@ def monitorShairportMetadata(changeEvent, stopEvent):
     try:
         with open(SHAIRPORT_FIFO) as fifo:
             while not stopEvent.is_set():
+                logging.info("Waiting for meta...")
                 line = fifo.read()
                 logging.info("line=%s", line)
                 if line:

@@ -118,9 +118,6 @@ def refreshTrack(changeEvent, stopEvent):
                     if prevTrack is None or track[0] != prevTrack[0]:
                         changeEvent.set()
                         os.system("killall -SIGUSR2 shairport")
-                        if threadShairport is not None:
-                            threadShairport.join()
-                            threadShairport = None
                         LCD16x2.switchOn()
                         LCD16x2.setText(1, track[0], 0)
                     if prevTrack is None or track[1] != prevTrack[1]:
@@ -161,7 +158,7 @@ def startJobs():
     lcd = Adafruit_CharLCDPlate(busnum = 1) 
     LCD16x2.init(lcd, mStop)
     LCD16x2.switchOn()
-    LCD16x2.setText(1, "Welcome to PiFi\nyour music hub!") 
+    LCD16x2.setText(1, "Welcome to PiFi\nyour music hub!")
     
     logging.info("RMS display job starting...")
     mThreadRMS = threading.Thread(target=refreshRmsNumpy, args=(mChangeEvent, mStop))
@@ -177,15 +174,20 @@ def stopJobs():
     global mStop
     global mThreadTrack
     global mThreadRMS
+    global mThreadShairport
 
     logging.info("Wait for stopping jobs...")
 
     # Redundant with signal handler
     mStop.set()
 
+    if threadShairport is not None:
+        threadShairport.join()
+        threadShairport = None
+
     if mThreadRMS is not None:
         mThreadRMS.join(3)
-    mThreadRMS = None
+        mThreadRMS = None
     
     LCD16x2.switchOff()
     

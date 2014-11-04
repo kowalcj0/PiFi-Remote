@@ -165,8 +165,8 @@ def startJobs():
     mThreadRMS.start()
     
     logging.info("Shairport metadata job starting...")
-    threadShairport = threading.Thread(target=monitorShairportMetadata, args=(mChangeEvent, mStop))
-    threadShairport.start()
+    mThreadShairport = threading.Thread(target=monitorShairportMetadata, args=(mChangeEvent, mStop))
+    mThreadShairport.start()
     
     sleep(1)
     LCD16x2.switchOff()
@@ -185,9 +185,9 @@ def stopJobs():
     # Redundant with signal handler
     mStop.set()
 
-    if threadShairport is not None:
-        threadShairport.join()
-        threadShairport = None
+    if mThreadShairport is not None:
+        mThreadShairport.join()
+        mThreadShairport = None
 
     if mThreadRMS is not None:
         mThreadRMS.join(3)

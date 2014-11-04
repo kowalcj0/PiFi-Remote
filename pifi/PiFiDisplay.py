@@ -26,6 +26,9 @@ def exitHandler(signal, frame):
     except:
         logging.critical("Unexpected error: %s", sys.exc_info()[0])
 
+def stopExternalStreaming():
+    os.system("killall -SIGUSR2 shairport")
+
 def createMPDClient():
     mpc = mpd.MPDClient()           
     mpc.timeout = None              # network timeout in seconds (floats allowed), default: None
@@ -116,7 +119,7 @@ def refreshTrack(changeEvent, stopEvent):
                 logging.info("Track: %s", track)
                 if track is not None:
                     if prevTrack is None or track[0] != prevTrack[0]:
-                        os.system("killall -SIGUSR2 shairport")
+                        stopExternalStreaming()
                         LCD16x2.switchOn()
                         LCD16x2.setText(1, track[0], 0)
                     if prevTrack is None or track[1] != prevTrack[1]:

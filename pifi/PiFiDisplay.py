@@ -96,13 +96,14 @@ def monitorShairportMetadata(changeEvent, stopEvent):
     try:
         with open(SHAIRPORT_FIFO) as fifo:
             while not stopEvent.is_set():
-                logging.info("Waiting for meta...")
                 line = fifo.readline()
-                logging.info("meta line=%s", line)
+                
                 if line:
-                    LCD16x2.switchOn()
-                    LCD16x2.setText(1, line)
-                    sleep(0.5)
+                    meta = line.split('='):
+                    logging.info("New meta: {}".format(meta))
+                    if meta[0] == 'title' and len(meta[1]) > 0:
+                        LCD16x2.switchOn()
+                        LCD16x2.setText(1, meta[1])
     except Exception as e:
         logging.critical("Critical exception: %s (%s)", e , type(e))
     logging.info("Job monitorShairportMetadata stopped")

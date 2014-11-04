@@ -99,7 +99,7 @@ def monitorShairportMetadata(changeEvent, stopEvent):
                 line = fifo.readline()
                 
                 if line:
-                    meta = line.split('='):
+                    meta = line.split('=')
                     logging.info("New meta: {}".format(meta))
                     if meta[0] == 'title' and len(meta[1]) > 0:
                         LCD16x2.switchOn()

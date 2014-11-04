@@ -97,7 +97,7 @@ def monitorShairportMetadata(changeEvent, stopEvent):
         with open(SHAIRPORT_FIFO) as fifo:
             while not stopEvent.is_set():
                 logging.info("Waiting for meta...")
-                line = fifo.read()
+                line = fifo.readline()
                 logging.info("meta line=%s", line)
                 if line:
                     LCD16x2.switchOn()

@@ -101,7 +101,7 @@ def monitorShairportMetadata(changeEvent, stopEvent):
                 if line:
                     meta = line.split('=')
                     logging.info("New meta: {}".format(meta))
-                    if meta[0] == 'title' and len(meta[1]) > 0:
+                    if meta[0] == 'title' and len(meta[1]) > 1:
                         LCD16x2.switchOn()
                         LCD16x2.setText(1, meta[1])
     except Exception as e:

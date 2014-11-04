@@ -23,6 +23,7 @@ def exitHandler(signal, frame):
         os.system("mpc stop")
         os.system("mpc volume -1")
         os.system("mpc volume +1")
+        stopExternalStreaming()
     except:
         logging.critical("Unexpected error: %s", sys.exc_info()[0])
 

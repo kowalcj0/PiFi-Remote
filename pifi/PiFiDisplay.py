@@ -19,11 +19,11 @@ def exitHandler(signal, frame):
     logging.info("Signaling internal jobs to stop...")
     try:
         mStop.set()
+        stopExternalStreaming()
         # unblock mpc's idle state with volume change
         os.system("mpc stop")
         os.system("mpc volume -1")
         os.system("mpc volume +1")
-        stopExternalStreaming()
     except:
         logging.critical("Unexpected error: %s", sys.exc_info()[0])
 

@@ -165,7 +165,7 @@ def startJobs():
     mThreadRMS.start()
     
     logging.info("Shairport metadata job starting...")
-    threadShairport = threading.Thread(target=monitorShairportMetadata, args=(changeEvent, stopEvent))
+    threadShairport = threading.Thread(target=monitorShairportMetadata, args=(mChangeEvent, mStop))
     threadShairport.start()
     
     sleep(1)

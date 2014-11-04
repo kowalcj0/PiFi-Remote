@@ -5,10 +5,7 @@ import sys
 import threading
 import logging
 from time import sleep
-
-import audioop
 import mpd
-
 from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 from PiScreens import LCD16x2
 from MpdTrack import MpdTrack
@@ -41,7 +38,7 @@ def createMPDClient():
     mpc.crossfade(1)
     return mpc
 
-def computeRMS(fifoFile, sampleSize, scale):
+def computeRmsAudioop(fifoFile, sampleSize, scale):
     exponent = 8
     level = 0
     try:
@@ -57,13 +54,14 @@ def computeRMS(fifoFile, sampleSize, scale):
     return level
                         
 def refreshRmsAudioop(changeEvent, stopEvent):
+    import audioop
     MPD_FIFO = '/tmp/mpd.fifo'
     logging.info("Job refreshRMS-audioop started")
     try:
         with open(MPD_FIFO) as fifo:
             while not stopEvent.is_set():
                 if MpdTrack.getInfo() is not None:
-                    n = computeRMS(fifo, 2024, 16)
+                    n = computeRmsAudioop(fifo, 2024, 16)
                     LCD16x2.setText(2, "="*n)
                     sleep(0.01)
     except Exception as e:
@@ -166,7 +164,7 @@ def startJobs():
     LCD16x2.setText(1, "Welcome to PiFi\nyour music hub!") 
     
     logging.info("RMS display job starting...")
-    mThreadRMS = threading.Thread(target=refreshRMS, args=(mChangeEvent, mStop))
+    mThreadRMS = threading.Thread(target=refreshRmsNumpy, args=(mChangeEvent, mStop))
     mThreadRMS.start()
     
     sleep(1)

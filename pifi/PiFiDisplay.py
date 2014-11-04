@@ -127,8 +127,6 @@ def refreshTrack(changeEvent, stopEvent):
                     LCD16x2.switchOff()
                     prevTrack = None
                     changeEvent.clear()
-                    threadShairport = threading.Thread(target=monitorShairportMetadata, args=(changeEvent, stopEvent))
-                    threadShairport.start()
             elif subsystem == 'mixer':
                 status = mpc.status()
                 logging.info("Volume change: %s", status['volume'])
@@ -150,6 +148,7 @@ def startJobs():
     global mStop
     global mThreadTrack
     global mThreadRMS
+    global mThreadShairport
 
     mStop = threading.Event()
     mChangeEvent = threading.Event()

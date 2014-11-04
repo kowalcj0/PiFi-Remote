@@ -56,9 +56,9 @@ def computeRMS(fifoFile, sampleSize, scale):
         logging.error("%s (%s)", e , type(e))  
     return level
                         
-def refreshRMS(changeEvent, stopEvent):
+def refreshRmsAudioop(changeEvent, stopEvent):
     MPD_FIFO = '/tmp/mpd.fifo'
-    logging.info("Job refreshRMS started")
+    logging.info("Job refreshRMS-audioop started")
     try:
         with open(MPD_FIFO) as fifo:
             while not stopEvent.is_set():
@@ -68,11 +68,11 @@ def refreshRMS(changeEvent, stopEvent):
                     sleep(0.01)
     except Exception as e:
         logging.critical("Critical exception: %s (%s)", e , type(e))
-    logging.info("Job refreshRMS stopped")
+    logging.info("Job refreshRMS-audioop stopped")
 
-def refreshRMS2(changeEvent, stopEvent):
+def refreshRmsNumpy(changeEvent, stopEvent):
     import SpectrumAnalyzer as sa
-    logging.info("Job refreshRMS started")
+    logging.info("Job refreshRMS-numpy started")
     try:
         analyzer = sa.SpectrumAnalyzer(1024, 44100, 8, 5)
         with open(sa.MPD_FIFO) as fifo:
@@ -86,7 +86,7 @@ def refreshRMS2(changeEvent, stopEvent):
                     sleep(0.01)
     except Exception as e:
         logging.critical("Critical exception: %s (%s)", e , type(e))
-    logging.info("Job refreshRMS stopped")
+    logging.info("Job -numpy stopped")
 
 def monitorShairportMetadata(changeEvent, stopEvent):
     SHAIRPORT_FIFO = '/tmp/shairport/now_playing'

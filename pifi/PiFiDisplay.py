@@ -6,6 +6,7 @@ import threading
 import logging
 from time import sleep
 import mpd
+import audioop
 from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
 from PiScreens import LCD16x2
 from MpdTrack import MpdTrack
@@ -54,7 +55,6 @@ def computeRmsAudioop(fifoFile, sampleSize, scale):
     return level
                         
 def refreshRmsAudioop(changeEvent, stopEvent):
-    import audioop
     MPD_FIFO = '/tmp/mpd.fifo'
     logging.info("Job refreshRmsAudioop started")
     try:

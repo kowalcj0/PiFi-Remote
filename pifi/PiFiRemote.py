@@ -16,7 +16,6 @@ logging.basicConfig(level=logging.DEBUG,
 def exitHandler(signal, frame):
     logging.info("Signaling internal jobs to stop...")
     try:
-        mStop.set()
         os.system("mpc stop")
         stopExternalStreaming()
     except:

@@ -8,7 +8,7 @@ from time import sleep
 from evdev import InputDevice, categorize, ecodes
 import mpd
             
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s %(module)s.%(funcName)s: %(message)s',
                     filename='/var/log/pifi-remote.log',
                     filemode='w')

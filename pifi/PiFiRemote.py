@@ -66,6 +66,8 @@ def monitorRemote():
             elif event.code == ecodes.KEY_ESC:
                 stopExternalStreaming()
                 mpc.stop()
+                os.system("mpc volume -1")
+                os.system("mpc volume +1")
             elif event.code == ecodes.KEY_A:
                 break
             mpc.close()

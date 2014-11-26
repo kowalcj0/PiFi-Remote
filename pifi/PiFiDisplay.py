@@ -120,7 +120,6 @@ def refreshTrack(changeEvent, stopEvent):
                 logging.info("Track: %s", track)
                 if track is not None:
                     if prevTrack is None or track[0] != prevTrack[0]:
-                        stopExternalStreaming()
                         changeEvent.set()
                         LCD16x2.switchOn()
                         LCD16x2.setText(1, track[0], 0)

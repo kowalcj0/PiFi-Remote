@@ -102,7 +102,7 @@ def monitorShairportMetadata(changeEvent, stopEvent):
                     elif meta[0] == 'artist' and len(meta[1]) > 1:
                         LCD16x2.switchOn()
                         LCD16x2.setText(2, meta[1][:-1])
-                    elif meta[0] == 'title' and len(meta[1]) == 0:
+                    elif meta[0] == 'title' and len(meta[1]) <= 1:
                         LCD16x2.switchOff()
     except Exception as e:
         logging.critical("Critical exception: %s (%s)", e , type(e))

@@ -165,7 +165,7 @@ def startJobs():
     LCD16x2.setText(1, "Welcome to PiFi\nyour music hub!")
     
     logging.info("RMS display job starting...")
-    mThreadRMS = threading.Thread(target=refreshRmsNumpy, args=(mChangeEvent, mStop))
+    mThreadRMS = threading.Thread(target=refreshRmsAudioop, args=(mChangeEvent, mStop))
     mThreadRMS.start()
     
     logging.info("Shairport metadata job starting...")

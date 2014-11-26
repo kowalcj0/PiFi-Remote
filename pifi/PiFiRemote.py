@@ -20,6 +20,9 @@ def exitHandler(signal, frame):
         os.system("mpc stop")
     except:
         logging.error("Unexpected error: %s", sys.exc_info()[0])
+        
+def stopExternalStreaming():
+    os.system("killall -SIGUSR2 shairport")
 
 def createMPDClient():
     mpc = mpd.MPDClient()           

@@ -49,6 +49,7 @@ def monitorRemote():
             mpc = createMPDClient()
             status = mpc.status()
             logging.debug("Status: {}".format(status))
+            logging.debug("KeyCode: {}".format(event.code))
             if event.code == ecodes.KEY_LEFT:
                 mpc.previous()
             elif event.code == ecodes.KEY_RIGHT:

@@ -64,6 +64,7 @@ def monitorRemote():
                     mpc.play()
             elif event.code == ecodes.KEY_ESC:
                 if status['state'] == 'stop':
+                    stopExternalStreaming()
                     mpc.play()
                 else:
                     mpc.stop()

@@ -98,10 +98,10 @@ def monitorShairportMetadata(changeEvent, stopEvent):
                     logging.info("New meta: {}".format(meta))
                     if meta[0] == 'title' and len(meta[1]) > 1:
                         LCD16x2.switchOn()
-                        LCD16x2.setText(1, meta[1])
+                        LCD16x2.setText(1, meta[1][:-1])
                     elif meta[0] == 'artist' and len(meta[1]) > 1:
                         LCD16x2.switchOn()
-                        LCD16x2.setText(2, meta[1])
+                        LCD16x2.setText(2, meta[1][:-1])
                     elif meta[0] == 'title' and len(meta[1]) == 0:
                         LCD16x2.switchOff()
     except Exception as e:

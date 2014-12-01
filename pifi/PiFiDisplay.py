@@ -197,6 +197,7 @@ def stopJobs():
         mThreadRMS = None
     
     LCD16x2.switchOff()
+    LCD16x2.terminate()
     
     mChangeEvent = None
     mStop = None

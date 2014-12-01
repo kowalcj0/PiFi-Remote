@@ -22,13 +22,13 @@ class LCD16x2(object):
         
     @classmethod
     def switchOn(cls):
-        with cls.mLock:
+        with cls.mHigh:
             cls.mLcd.clear()
             cls.mLcd.backlight(cls.mLcd.RED)
     
     @classmethod
     def switchOff(cls):
-        with cls.mLock:
+        with cls.mHigh:
             cls.mLcd.clear()
             cls.mLcd.backlight(cls.mLcd.OFF)
     

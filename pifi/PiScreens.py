@@ -9,22 +9,16 @@ Pi screen LCD 16x2
 """
 class LCD16x2(object):
     mLcd = None
-    mStop = None
-    mLock = None
-    mController = None
-    mUpdate1 = threading.Event()
-    mUpdate2 = threading.Event()
-    mStr1 = ''
-    mStr2 = ''
-    mD1 = 0
-    mD2 = 0
+    mUpdate1 = threading.RLock()
+    mUpdate2 = threading.RLock()
     
     @classmethod
-    def init(cls, lcd, stopEvent):
-        cls.mStop = stopEvent
+    def init(cls, lcd):
         cls.mLcd = lcd
-        cls.mController = WaitForMultipleEvents([cls.mUpdate1, cls.mUpdate2, cls.mStop])
-        cls.mLock = threading.Lock()
+    
+    @classmethod
+    def terminate(cls):
+        cls.mLcd = None
         
     @classmethod
     def switchOn(cls):
@@ -142,7 +136,7 @@ class LCD16x2t(object):
         cls.mThread.start()
         
     @classmethod
-    def terminate(cls, lcd, stopEvent):
+    def terminate(cls):
         cls.mStop.set()
         if cls.mThread:
             cls.mThread.join()

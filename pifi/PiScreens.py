@@ -11,7 +11,6 @@ class LCD16x2(object):
     mLcd = None
     mStop = None
     mLock = None
-    mThread = None
     mController = None
     mUpdate1 = threading.Event()
     mUpdate2 = threading.Event()
@@ -26,8 +25,6 @@ class LCD16x2(object):
         cls.mLcd = lcd
         cls.mController = WaitForMultipleEvents([cls.mUpdate1, cls.mUpdate2, cls.mStop])
         cls.mLock = threading.Lock()
-        cls.mThread = threading.Thread(target=cls.display)
-        cls.mThread.start()
         
     @classmethod
     def switchOn(cls):
@@ -143,6 +140,13 @@ class LCD16x2t(object):
         cls.mLock = threading.Lock()
         cls.mThread = threading.Thread(target=cls.display)
         cls.mThread.start()
+        
+    @classmethod
+    def terminate(cls, lcd, stopEvent):
+        cls.mStop.set()
+        if cls.mThread:
+            cls.mThread.join()
+            cls.mThread = None
         
     @classmethod
     def switchOn(cls):

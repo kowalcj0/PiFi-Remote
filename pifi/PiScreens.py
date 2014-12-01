@@ -34,19 +34,20 @@ class LCD16x2(object):
     
     @classmethod
     def setText(cls, id, text, delay = 0):
-        with cls.mHigh:
             if len(text) > 16:
                 text = text[0:15]
             else:
                 text += " "*(16-len(text))
-            if id == 1 and cls.mD1 == 0:
-                cls.mStr1 = text
-                cls.mD1 = delay
-                cls.mController.set(cls.mUpdate1)
-            elif id == 2 and cls.mD2 == 0:
-                cls.mStr2 = text
-                cls.mD2 = delay
-                cls.mController.set(cls.mUpdate2)
+            if id == 1:
+                with cls.mHigh: 
+                    #logging.debug("%s: %s", id, text)
+                    cls.mLcd.clear()
+                    cls.mLcd.message(text)
+            elif id == 2:
+                with cls.mHigh: 
+                    #logging.debug("%s: %s", id, text)
+                    cls.mLcd.clear()
+                    cls.mLcd.message('\n' + text)
     
     @classmethod
     def timerEnds(cls, disableEvent, timers, index):

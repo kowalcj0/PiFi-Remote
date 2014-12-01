@@ -9,8 +9,8 @@ Pi screen LCD 16x2
 """
 class LCD16x2(object):
     mLcd = None
-    mUpdate1 = threading.RLock()
-    mUpdate2 = threading.RLock()
+    mHigh = threading.RLock()
+    mLow = threading.RLock()
     
     @classmethod
     def init(cls, lcd):

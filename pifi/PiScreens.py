@@ -43,17 +43,21 @@ class LCD16x2(object):
                 #logging.debug("%s: %s", id, text)
                 cls.mLcd.clear()
                 cls.mLcd.message(text)
+                if delay > 0:
+                    cls.mHigh.acquire()
+                    timer = threading.Timer(delay, cls.timerEnds, args=[id])
         elif id == 2:
-            with cls.mHigh: 
+            with cls.mLow: 
                 #logging.debug("%s: %s", id, text)
                 cls.mLcd.clear()
                 cls.mLcd.message('\n' + text)
+                if delay > 0:
+                    cls.mLow.acquire()
+                    timer = threading.Timer(delay, cls.timerEnds, args=[id])
     
     @classmethod
-    def timerEnds(cls, disableEvent, timers, index):
-        disableEvent.clear()
-        timers[index] = None
-        
+    def timerEnds(cls):
+        cls.mHigh.release()
         
 """
 Pi screen LCD 16x2 

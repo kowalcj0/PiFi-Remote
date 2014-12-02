@@ -52,7 +52,6 @@ class LCD16x2(object):
                 if delay > 0:
                     if cls.mTimer:
                         cls.mTimer.cancel()
-                    cls.mPersist.aquire()
                     cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
                     cls.mTimer.start()
                 else:

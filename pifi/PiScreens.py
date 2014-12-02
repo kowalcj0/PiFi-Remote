@@ -9,8 +9,9 @@ Pi screen LCD 16x2
 """
 class LCD16x2(object):
     mLcd = None
-    mHigh = threading.RLock()
-    mLow = threading.RLock()
+    mLock = threading.RLock()
+    mPersist = threading.Lock()
+    mTimer = None
     
     @classmethod
     def init(cls, lcd):
@@ -39,25 +40,28 @@ class LCD16x2(object):
         else:
             text += " "*(16-len(text))
         if id == 1:
-            with cls.mHigh: 
+            with cls.mLock: 
                 #logging.debug("%s: %s", id, text)
                 cls.mLcd.clear()
                 cls.mLcd.message(text)
-                if delay > 0:
-                    cls.mHigh.acquire()
-                    timer = threading.Timer(delay, cls.timerEnds, args=[id])
         elif id == 2:
-            with cls.mLow: 
-                #logging.debug("%s: %s", id, text)
-                cls.mLcd.clear()
-                cls.mLcd.message('\n' + text)
+            if mPersist.aquire(False):
+                with cls.mLock:
+                    #logging.debug("%s: %s", id, text)
+                    cls.mLcd.message('\n' + text)
                 if delay > 0:
-                    cls.mLow.acquire()
-                    timer = threading.Timer(delay, cls.timerEnds, args=[id])
+                    if cls.mTimer:
+                        cls.mTimer.cancel()
+                    cls.mPersist.aquire()
+                    cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
+                    cls.mTimer.start()
+                else:
+                    mPersist.release()
     
     @classmethod
-    def timerEnds(cls):
-        cls.mHigh.release()
+    def timerEnds(cls, id):
+        #logging.debug("release %s", id)
+        cls.mPersist.release()
         
 """
 Pi screen LCD 16x2 

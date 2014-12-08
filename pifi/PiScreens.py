@@ -29,6 +29,7 @@ class LCD16x2(object):
                cls.mTimer.cancel()
             cls.mLcd.clear()
             cls.mLcd.backlight(cls.mLcd.RED)
+            cls.mPersist.release()
     
     @classmethod
     def switchOff(cls):
@@ -37,6 +38,7 @@ class LCD16x2(object):
                cls.mTimer.cancel()
             cls.mLcd.clear()
             cls.mLcd.backlight(cls.mLcd.OFF)
+            cls.mPersist.release()
     
     @classmethod
     def setText(cls, id, text, delay = 0):
@@ -49,18 +51,19 @@ class LCD16x2(object):
                 #logging.debug("%s: %s", id, text)
                 cls.mLcd.clear()
                 cls.mLcd.message(text)
+                if cls.mTimer:
+                    cls.mTimer.cancel()
+                cls.mPersist.release()
         elif id == 2:
             if mPersist.aquire(False):
                 with cls.mLock:
                     #logging.debug("%s: %s", id, text)
                     cls.mLcd.message('\n' + text)
-                if delay > 0:
                     if cls.mTimer:
                         cls.mTimer.cancel()
-                    cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
-                    cls.mTimer.start()
-                else:
-                    cls.mPersist.release()
+                    if delay > 0:
+                        cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
+                        cls.mTimer.start()
     
     @classmethod
     def timerEnds(cls, id):

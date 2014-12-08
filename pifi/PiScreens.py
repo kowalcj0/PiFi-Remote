@@ -58,7 +58,7 @@ class LCD16x2(object):
                 cls.mLcd.message(text)
                 cls.unlockPersist()
         elif id == 2:
-            if mPersist.aquire(False):
+            if cls.mPersist.aquire(False):
                 with cls.mLock:
                     #logging.debug("%s: %s", id, text)
                     if cls.mTimer:
@@ -73,7 +73,7 @@ class LCD16x2(object):
     
     @classmethod
     def timerEnds(cls, id):
-        #logging.debug("release %s", id)
+        logging.info("timer ends: releasing %s", id)
         cls.mPersist.release()
         
     @classmethod

@@ -19,7 +19,7 @@ class LCD16x2(object):
     
     @classmethod
     def terminate(cls):
-        switchOff(cls):
+        switchOff(cls)
         cls.mLcd = None
         
     @classmethod

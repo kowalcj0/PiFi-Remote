@@ -24,7 +24,7 @@ class LCD16x2(object):
         
     @classmethod
     def switchOn(cls):
-        with cls.mHigh:
+        with cls.mLock:
             if cls.mTimer:
                cls.mTimer.cancel()
             cls.mLcd.clear()
@@ -32,7 +32,7 @@ class LCD16x2(object):
     
     @classmethod
     def switchOff(cls):
-        with cls.mHigh:
+        with cls.mLock:
             if cls.mTimer:
                cls.mTimer.cancel()
             cls.mLcd.clear()

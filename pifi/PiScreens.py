@@ -67,6 +67,8 @@ class LCD16x2(object):
                     if delay > 0:
                         cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
                         cls.mTimer.start()
+                    else:
+                        cls.mPersist.release()
     
     @classmethod
     def timerEnds(cls, id):

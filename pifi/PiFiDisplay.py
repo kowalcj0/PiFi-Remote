@@ -159,7 +159,7 @@ def startJobs():
     
     # Use busnum = 0 for raspi version 1 (256MB) and busnum = 1 for version 2
     lcd = Adafruit_CharLCDPlate(busnum = 1) 
-    LCD16x2.init(lcd, mStop)
+    LCD16x2.init(lcd)
     LCD16x2.switchOn()
     LCD16x2.setText(1, "Welcome to PiFi\nyour music hub!")
     

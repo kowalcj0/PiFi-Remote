@@ -58,7 +58,7 @@ class LCD16x2(object):
                 cls.mLcd.message(text)
                 cls.unlockPersist()
         elif id == 2:
-            if cls.mPersist.aquire(False):
+            if cls.mPersist.acquire(False):
                 with cls.mLock:
                     #logging.debug("%s: %s", id, text)
                     if cls.mTimer:

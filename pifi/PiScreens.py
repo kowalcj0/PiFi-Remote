@@ -19,17 +19,22 @@ class LCD16x2(object):
     
     @classmethod
     def terminate(cls):
+        switchOff(cls):
         cls.mLcd = None
         
     @classmethod
     def switchOn(cls):
         with cls.mHigh:
+            if cls.mTimer:
+               cls.mTimer.cancel()
             cls.mLcd.clear()
             cls.mLcd.backlight(cls.mLcd.RED)
     
     @classmethod
     def switchOff(cls):
         with cls.mHigh:
+            if cls.mTimer:
+               cls.mTimer.cancel()
             cls.mLcd.clear()
             cls.mLcd.backlight(cls.mLcd.OFF)
     

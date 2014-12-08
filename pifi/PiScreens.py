@@ -27,6 +27,7 @@ class LCD16x2(object):
         with cls.mLock:
             if cls.mTimer:
                cls.mTimer.cancel()
+               cls.mTimer = None
             cls.mLcd.clear()
             cls.mLcd.backlight(cls.mLcd.RED)
             cls.mPersist.release()
@@ -36,6 +37,7 @@ class LCD16x2(object):
         with cls.mLock:
             if cls.mTimer:
                cls.mTimer.cancel()
+               cls.mTimer = None
             cls.mLcd.clear()
             cls.mLcd.backlight(cls.mLcd.OFF)
             cls.mPersist.release()
@@ -49,10 +51,11 @@ class LCD16x2(object):
         if id == 1:
             with cls.mLock: 
                 #logging.debug("%s: %s", id, text)
-                cls.mLcd.clear()
-                cls.mLcd.message(text)
                 if cls.mTimer:
                     cls.mTimer.cancel()
+                    cls.mTimer = None
+                cls.mLcd.clear()
+                cls.mLcd.message(text)
                 cls.mPersist.release()
         elif id == 2:
             if mPersist.aquire(False):

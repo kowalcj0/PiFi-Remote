@@ -62,13 +62,14 @@ class LCD16x2(object):
                 with cls.mLock:
                     #logging.debug("%s: %s", id, text)
                     cls.mLcd.message('\n' + text)
-                    if cls.mTimer:
-                        cls.mTimer.cancel()
-                    if delay > 0:
-                        cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
-                        cls.mTimer.start()
-                    else:
-                        cls.mPersist.release()
+                if cls.mTimer:
+                    cls.mTimer.cancel()
+                    cls.mTimer = None
+                if delay > 0:
+                    cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
+                    cls.mTimer.start()
+                else:
+                    cls.mPersist.release()
     
     @classmethod
     def timerEnds(cls, id):

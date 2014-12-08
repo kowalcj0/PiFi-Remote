@@ -30,7 +30,7 @@ class LCD16x2(object):
                cls.mTimer = None
             cls.mLcd.clear()
             cls.mLcd.backlight(cls.mLcd.RED)
-            cls.mPersist.release()
+            cls.unlockPersist()
     
     @classmethod
     def switchOff(cls):
@@ -40,7 +40,7 @@ class LCD16x2(object):
                cls.mTimer = None
             cls.mLcd.clear()
             cls.mLcd.backlight(cls.mLcd.OFF)
-            cls.mPersist.release()
+            cls.unlockPersist()
     
     @classmethod
     def setText(cls, id, text, delay = 0):
@@ -56,7 +56,7 @@ class LCD16x2(object):
                 #logging.debug("%s: %s", id, text)
                 cls.mLcd.clear()
                 cls.mLcd.message(text)
-                cls.mPersist.release()
+                cls.unlockPersist()
         elif id == 2:
             if mPersist.aquire(False):
                 with cls.mLock:
@@ -69,12 +69,20 @@ class LCD16x2(object):
                         cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
                         cls.mTimer.start()
                     else:
-                        cls.mPersist.release()
+                        cls.unlockPersist()
     
     @classmethod
     def timerEnds(cls, id):
         #logging.debug("release %s", id)
         cls.mPersist.release()
+        
+    @classmethod
+    def unlockPersist(cls):
+        try:
+            cls.mPersist.release()
+        except ThreadError:
+            pass
+        
         
 """
 Pi screen LCD 16x2 

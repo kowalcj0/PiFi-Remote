@@ -157,6 +157,8 @@ def startJobs():
     mStop = threading.Event()
     mChangeEvent = threading.Event()
     mThreadShairport = None
+    mThreadRMS = None
+    mThreadTrack = None
     
     # Use busnum = 0 for raspi version 1 (256MB) and busnum = 1 for version 2
     lcd = Adafruit_CharLCDPlate(busnum = 1) 

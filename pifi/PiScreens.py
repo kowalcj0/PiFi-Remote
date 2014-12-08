@@ -80,7 +80,7 @@ class LCD16x2(object):
     def unlockPersist(cls):
         try:
             cls.mPersist.release()
-        except ThreadError:
+        except threading.ThreadError:
             pass
         
         

@@ -47,30 +47,7 @@ class LCD16x2(object):
         if len(text) > 16:
             text = text[0:15]
         else:
-            text += " "*(16-len(text))
-        if id == 1:
-            with cls.mLock: 
-                if cls.mTimer:
-                    cls.mTimer.cancel()
-                    cls.mTimer = None
-                #logging.debug("%s: %s", id, text)
-                cls.mLcd.clear()
-                cls.mLcd.message(text)
-                cls.unlockPersist()
-        elif id == 2:
-            if cls.mPersist.acquire(False):
-                with cls.mLock:
-                    #logging.debug("%s: %s", id, text)
-                    if cls.mTimer:
-                        cls.mTimer.cancel()
-                        cls.mTimer = None
-                    cls.mLcd.message('\n' + text)
-                    if delay > 0:
-                        cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
-                        cls.mTimer.start()
-                    else:
-                        cls.unlockPersist()
-        
+            text += " "*(16-len(text))        
         if priority == 0 and cls.mPersist.acquire(False):
             with cls.mLock:
                 #logging.debug("%s: %s", id, text)

@@ -135,7 +135,7 @@ def refreshTrack(changeEvent, stopEvent):
                 status = mpc.status()
                 logging.info("Volume change: %s", status['volume'])
                 if status['state'] != 'stop':
-                    LCD16x2.setText(2, "Volume {0!s}%".format(status['volume']), 1)
+                    LCD16x2.setText(2, "Volume {0!s}%".format(status['volume']), 1, 1)
         except mpd.ConnectionError as e:
             logging.error("Connection error: %s", e)
             mpc.connect("localhost", 6600)

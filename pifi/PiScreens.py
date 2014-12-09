@@ -47,7 +47,9 @@ class LCD16x2(object):
         if len(text) > 16:
             text = text[0:15]
         else:
-            text += " "*(16-len(text))        
+            text += " "*(16-len(text)) 
+        if id == 2:
+            text = '\n'+text 
         if priority == 0 and cls.mPersist.acquire(False):
             with cls.mLock:
                 #logging.debug("%s: %s", id, text)

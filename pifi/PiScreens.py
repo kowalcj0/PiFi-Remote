@@ -21,7 +21,7 @@ class LCD16x2(object):
     def terminate(cls):
         switchOff(cls)
         cls.mLcd = None
-        
+    
     @classmethod
     def switchOn(cls):
         with cls.mLock:
@@ -43,7 +43,7 @@ class LCD16x2(object):
             cls.unlockPersist()
     
     @classmethod
-    def setText(cls, id, text, delay = 0):
+    def setText(cls, id, text, delay = 0, priority = 0):
         if len(text) > 16:
             text = text[0:15]
         else:
@@ -70,10 +70,36 @@ class LCD16x2(object):
                         cls.mTimer.start()
                     else:
                         cls.unlockPersist()
+        
+        if priority == 0 and cls.mPersist.acquire(False):
+            with cls.mLock:
+                #logging.debug("%s: %s", id, text)
+                if cls.mTimer:
+                    cls.mTimer.cancel()
+                    cls.mTimer = None
+                cls.mLcd.message(text)
+                if delay > 0:
+                    cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
+                    cls.mTimer.start()
+                else:
+                    cls.unlockPersist()
+        elif priority > 0:
+            with cls.mLock:
+                #logging.debug("%s: %s", id, text)
+                if cls.mTimer:
+                    cls.mTimer.cancel()
+                    cls.mTimer = None
+                cls.mLcd.message(text)
+                if delay > 0:
+                    cls.unlockPersist()
+                    cls.mPersist.acquire(False)
+                    cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
+                    cls.mTimer.start()
+            
     
     @classmethod
     def timerEnds(cls, id):
-        logging.info("timer ended: releasing %s", id)
+        logging.info("Timer ended: releasing lock for id %s", id)
         cls.mPersist.release()
         
     @classmethod

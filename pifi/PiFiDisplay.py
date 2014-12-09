@@ -124,9 +124,9 @@ def refreshTrack(changeEvent, stopEvent):
                     if prevTrack is None or track[0] != prevTrack[0]:
                         changeEvent.set()
                         LCD16x2.switchOn()
-                        LCD16x2.setText(1, track[0], 0)
+                        LCD16x2.setText(1, track[0], 0, 1)
                     if prevTrack is None or track[1] != prevTrack[1]:
-                        LCD16x2.setText(2, track[1], 1)
+                        LCD16x2.setText(2, track[1], 1, 1)
                     prevTrack = track
                 else:
                     LCD16x2.switchOff()

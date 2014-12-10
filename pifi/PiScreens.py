@@ -24,23 +24,24 @@ class LCD16x2(object):
     
     @classmethod
     def switchOn(cls):
+        if cls.mTimer:
+           cls.mTimer.cancel()
+           cls.mTimer = None
+        cls.unlockPersist()
         with cls.mLock:
-            if cls.mTimer:
-               cls.mTimer.cancel()
-               cls.mTimer = None
             cls.mLcd.clear()
-            cls.mLcd.backlight(cls.mLcd.RED)
-            cls.unlockPersist()
+            cls.mLcd.backlight(cls.mLcd.RED)  
     
     @classmethod
     def switchOff(cls):
+        if cls.mTimer:
+           cls.mTimer.cancel()
+           cls.mTimer = None
+        cls.unlockPersist()
         with cls.mLock:
-            if cls.mTimer:
-               cls.mTimer.cancel()
-               cls.mTimer = None
             cls.mLcd.clear()
             cls.mLcd.backlight(cls.mLcd.OFF)
-            cls.unlockPersist()
+            
     
     @classmethod
     def setText(cls, id, text, delay = 0, priority = 0):
@@ -51,29 +52,29 @@ class LCD16x2(object):
         if id == 2:
             text = '\n'+text 
         if priority == 0 and cls.mPersist.acquire(False):
+            #logging.debug("%s: %s", id, text)
+            if cls.mTimer:
+                cls.mTimer.cancel()
+                cls.mTimer = None
             with cls.mLock:
-                #logging.debug("%s: %s", id, text)
-                if cls.mTimer:
-                    cls.mTimer.cancel()
-                    cls.mTimer = None
                 cls.mLcd.message(text)
-                if delay > 0:
-                    cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
-                    cls.mTimer.start()
-                else:
-                    cls.unlockPersist()
+            if delay > 0:
+                cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
+                cls.mTimer.start()
+            else:
+                cls.unlockPersist()
         elif priority > 0:
+            #logging.debug("%s: %s", id, text)
+            if cls.mTimer:
+                cls.mTimer.cancel()
+                cls.mTimer = None
             with cls.mLock:
-                #logging.debug("%s: %s", id, text)
-                if cls.mTimer:
-                    cls.mTimer.cancel()
-                    cls.mTimer = None
                 cls.mLcd.message(text)
-                if delay > 0:
-                    cls.unlockPersist()
-                    cls.mPersist.acquire(False)
-                    cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
-                    cls.mTimer.start()
+            if delay > 0:
+                cls.unlockPersist()
+                cls.mPersist.acquire(False)
+                cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
+                cls.mTimer.start()
             
     
     @classmethod

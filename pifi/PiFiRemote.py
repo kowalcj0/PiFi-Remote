@@ -54,9 +54,9 @@ def monitorRemote():
             elif event.code == ecodes.KEY_RIGHT:
                 mpc.next()
             elif event.code == ecodes.KEY_UP:
-                mpc.setvol(int(status['volume'])+2)
+                mpc.setvol(int(status['volume'])+1)
             elif event.code == ecodes.KEY_DOWN:
-                mpc.setvol(int(status['volume'])-2)
+                mpc.setvol(int(status['volume'])-1)
             elif event.code == ecodes.KEY_ENTER:
                 if status['state'] == 'play':
                     mpc.pause()

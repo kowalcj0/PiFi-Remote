@@ -112,7 +112,6 @@ def refreshTrack(changeEvent, stopEvent):
     mpc = createMPDClient()
     MpdTrack.init(mpc)
     prevTrack = None
-    threadShairport = None
     logging.info("Job refreshTrack started")
     while not stopEvent.is_set():
         try:

@@ -70,8 +70,8 @@ class LCD16x2(object):
                 cls.mTimer = None
             with cls.mLock:
                 cls.mLcd.message(text)
+            cls.unlockPersist()
             if delay > 0:
-                cls.unlockPersist()
                 cls.mPersist.acquire(False)
                 cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
                 cls.mTimer.start()

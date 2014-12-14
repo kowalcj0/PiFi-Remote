@@ -45,6 +45,8 @@ class LCD16x2(object):
     
     @classmethod
     def setText(cls, id, text, delay = 0, priority = 0):
+        if text == '':
+            logging.info("text for %s: '%s'", id, text)
         if len(text) > 16:
             text = text[0:15]
         else:
@@ -74,8 +76,7 @@ class LCD16x2(object):
             if delay > 0:
                 cls.mPersist.acquire(False)
                 cls.mTimer = threading.Timer(delay, cls.timerEnds, args=[id])
-                cls.mTimer.start()
-            
+                cls.mTimer.start() 
     
     @classmethod
     def timerEnds(cls, id):

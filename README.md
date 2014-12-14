@@ -10,7 +10,7 @@ It has been tested with Volumio 1.4 and it adds:
 
 * Switch from Airplay to Mpd and vice versa, display Airplay metadata on screen
 
-* Improve overall responsiveness of display / control
+* Improve overall responsiveness of display / control (new LCD controller class)
 
 
 Find more on: https://bitbucket.org/bertrandboichon/

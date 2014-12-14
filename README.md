@@ -12,6 +12,7 @@ It has been tested with Volumio 1.4 and it adds:
 
 * Improve overall responsiveness of display / control
 
+
 Find more on: https://bitbucket.org/bertrandboichon/
 
 Repo owner or admin: Bertrand Boichon

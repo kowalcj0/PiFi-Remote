@@ -101,8 +101,8 @@ def monitorShairportMetadata(changeEvent, stopEvent):
                         artist = meta[1][:-1]
                     elif meta[0] == 'title' and len(meta[1]) > 1:
                         LCD16x2.switchOn()
-                        LCD16x2.setText(1, 'Airplay', 0, 1)
-                        LCD16x2.setText(2, meta[1][:-1]+' - '+artist, 0, 1)
+                        LCD16x2.setText(1, 'Airplay: ' + artist, 0, 1)
+                        LCD16x2.setText(2, meta[1][:-1], 0, 1)
                     elif meta[0] == 'title' and len(meta[1]) <= 1:
                         LCD16x2.switchOff()
                         artist = ''

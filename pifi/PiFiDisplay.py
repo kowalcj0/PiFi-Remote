@@ -89,6 +89,7 @@ def refreshRmsNumpy(changeEvent, stopEvent):
 def monitorShairportMetadata(changeEvent, stopEvent):
     SHAIRPORT_FIFO = '/tmp/shairport/now_playing'
     logging.info("Job monitorShairportMetadata started")
+    artist = ''
     try:
         with open(SHAIRPORT_FIFO) as fifo:
             while not stopEvent.is_set():
@@ -96,14 +97,15 @@ def monitorShairportMetadata(changeEvent, stopEvent):
                 if line:
                     meta = line.split('=')
                     logging.info("New meta: {}".format(meta))
-                    if meta[0] == 'title' and len(meta[1]) > 1:
+                    if meta[0] == 'artist' and len(meta[1]) > 1: 
+                        artist = meta[1][:-1]
+                    elif meta[0] == 'title' and len(meta[1]) > 1:
                         LCD16x2.switchOn()
                         LCD16x2.setText(1, meta[1][:-1], 0, 1)
-                    elif meta[0] == 'artist' and len(meta[1]) > 1:
-                        LCD16x2.switchOn()
-                        LCD16x2.setText(2, meta[1][:-1], 0, 1)
+                        LCD16x2.setText(2, artist, 0, 1)
                     elif meta[0] == 'title' and len(meta[1]) <= 1:
                         LCD16x2.switchOff()
+                        artist = ''
     except Exception as e:
         logging.critical("Critical exception: %s (%s)", e , type(e))
     logging.info("Job monitorShairportMetadata stopped")

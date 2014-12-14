@@ -1,4 +1,3 @@
-Version: 1.1.1
 
 PiFi is a set of python scripts running as daemons to improve the experience of mpd on Raspberry Pi.
 It has been tested with Volumio 1.4 and it adds:
@@ -10,6 +9,8 @@ It has been tested with Volumio 1.4 and it adds:
   It displays track, volume information as well as the current audio level (RMS) on screen.
 
 * Switch from Airplay to Mpd and vice versa, display Airplay metadata on screen
+
+* Improve overall responsiveness of display / control
 
 Find more on: https://bitbucket.org/bertrandboichon/
 

@@ -91,7 +91,7 @@ class LCD16x2(object):
         
         
 """
-Pi screen LCD 16x2 
+Pi screen LCD 16x2 - threaded style
 """
 class LCD16x2t(object):
     mLcd = None

@@ -71,6 +71,8 @@ class LCD16x2(object):
                 cls.mTimer.cancel()
                 cls.mTimer = None
             with cls.mLock:
+                if id == 1:
+                    cls.mLcd.clear()
                 cls.mLcd.message(text)
             cls.unlockPersist()
             if delay > 0:

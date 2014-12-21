@@ -40,7 +40,7 @@ setup(
     version='1.1.3',
 
     description='Hi Fi music hub on Raspberry Pi',
-    long_description=read('README.md'),
+    long_description='Hi Fi music hub on Raspberry Pi',
 
     # The project's main homepage.
     url='https://bitbucket.org/bertrandboichon/pi.hifi',

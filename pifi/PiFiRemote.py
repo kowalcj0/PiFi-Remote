@@ -29,10 +29,10 @@ def createMPDClient():
     mpc.timeout = None              # network timeout in seconds (floats allowed), default: None
     mpc.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
     mpc.connect("localhost", 6600)  # connect to localhost:6600
-    mpc.random(0)
+    #mpc.random(0)
     mpc.consume(0)
     mpc.single(0)
-    mpc.repeat(1)
+    #mpc.repeat(1)
     mpc.crossfade(1)
     return mpc
     
@@ -49,28 +49,42 @@ def monitorRemote():
             status = mpc.status()
             logging.debug("Status: {}".format(status))
             logging.debug("KeyCode: {}".format(event.code))
-            if event.code == ecodes.KEY_LEFT:
+            if event.code in [ecodes.KEY_LEFT, 165]:
                 mpc.previous()
-            elif event.code == ecodes.KEY_RIGHT:
+            elif event.code in [ecodes.KEY_RIGHT, 163]:
                 mpc.next()
-            elif event.code == ecodes.KEY_UP:
+            elif event.code in [ecodes.KEY_UP, 115]:
                 mpc.setvol(int(status['volume'])+1)
-            elif event.code == ecodes.KEY_DOWN:
+            elif event.code in [ecodes.KEY_DOWN, 114]:
                 mpc.setvol(int(status['volume'])-1)
-            elif event.code == ecodes.KEY_ENTER:
+            elif event.code == 168:
+                mpc.seekcur(-5)
+            elif event.code == 208:
+                mpc.seekcur('+5')
+            elif event.code == 43:
+                if int(status['repeat']) == 0:
+                    mpc.repeat(1)
+                else:
+                    mpc.repeat(0)
+            elif event.code == 20:
+                if status['random'] == '0':
+                    mpc.random(1)
+                else:
+                    mpc.random(0)
+            elif event.code in [ecodes.KEY_ENTER, 164]:
                 if status['state'] == 'play':
                     mpc.pause()
                 else:
                     stopExternalStreaming()
                     mpc.play()
-            elif event.code == ecodes.KEY_ESC:
+            elif event.code in [ecodes.KEY_ESC, 166]:
                 stopExternalStreaming()
                 mpc.stop()
                 os.system("mpc volume -1")
                 os.system("mpc volume +1")
             elif event.code == ecodes.KEY_A:
                 break
-            mpc.close()
+            mpc.close() 
             mpc.disconnect()
         except Exception as e:
             logging.error("Caught exception: %s (%s)", e , type(e)) 

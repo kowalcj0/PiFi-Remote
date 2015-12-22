@@ -10,14 +10,6 @@ class post_install(install):
     def run(self):
         install.run(self)
         print("*** Executing post install actions:")
-        # update mpd configuration if necessary
-        if not '/tmp/mpd.fifo' in open('/etc/mpd.conf').read():
-            os.system("sudo cat /etc/fifo-mpd.conf >> /etc/mpd.conf") 
-            os.system("sudo service mpd restart") 
-        # update music display init script
-        os.system("sudo chmod +x /etc/init.d/pifidisplay")
-        os.system("sudo update-rc.d pifidisplay defaults")
-        os.system("sudo service pifidisplay restart")
         # update remote control init script
         os.system("sudo chmod +x /etc/init.d/pifiremote")
         os.system("sudo update-rc.d pifiremote defaults")
@@ -89,10 +81,7 @@ setup(
     # project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/technical.html#install-requires-vs-requirements-files
-    install_requires=['python-mpd2',
-                    'evdev',
-                    'numpy',
-                    'RPi.GPIO'],
+    install_requires=['python-mpd2', 'evdev'],
 
     # If there are data files included in your packages that need to be
     # installed, specify them here.  If using Python 2.6 or less, then these
@@ -112,16 +101,12 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
         'console_scripts': [
-            'pifi-display = pifi.PiFiDisplay:main',
             'pifi-remote = pifi.PiFiRemote:main',
         ],
     },
     
     data_files=[
-        ('/etc/init.d', ['etc/init.d/pifidisplay']),
         ('/etc/init.d', ['etc/init.d/pifiremote']),
-        ('/etc/init.d', ['etc/init.d/shairport']),
-        ('/etc',        ['etc/fifo-mpd.conf'])
     ],
     
     cmdclass = {'install': post_install},
